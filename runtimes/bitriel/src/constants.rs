@@ -15,7 +15,7 @@ pub mod currency {
 pub mod time {
 	use bitriel_primitives::BlockNumber;
 
-	pub const MILLISECS_PER_BLOCK: u64 = 12000;.
+	pub const MILLISECS_PER_BLOCK: u64 = 12000;
 	pub const SLOT_DURATION: u64 = MILLISECS_PER_BLOCK;
 	
 	pub const MINUTES: BlockNumber = 60_000 / (MILLISECS_PER_BLOCK as BlockNumber);

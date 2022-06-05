@@ -1,0 +1,12 @@
+**/target/
+**/*.rs.bk
+*.swp
+.wasm-binaries
+pwasm-alloc/target/
+pwasm-libc/target/
+pwasm-alloc/Cargo.lock
+pwasm-libc/Cargo.lock
+bin/node/runtime/wasm/target/
+**/._*
+**/.criterion/
+.vscode

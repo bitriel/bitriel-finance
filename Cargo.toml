@@ -1,0 +1,22 @@
+cargo-features = ["resolver"]
+
+[workspace]
+members = [
+    "primitives",
+    "runtimes/common",
+    "runtimes/bitriel"
+]
+
+resolver = "2"
+
+[profile.dev]
+split-debuginfo = "unpacked"
+
+[profile.release]
+# Acala runtime requires unwinding.
+panic = "unwind"
+
+[profile.production]
+inherits = "release"
+lto = true
+codegen-units = 1

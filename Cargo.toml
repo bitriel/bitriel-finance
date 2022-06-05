@@ -1,11 +1,12 @@
-cargo-features = ["resolver"]
-
 [workspace]
 members = [
     "primitives",
     "runtimes/common",
-    "runtimes/bitriel"
+    "runtimes/bitriel",
+    "runtimes/rieltest"
 ]
+
+cargo-features = ["resolver"]
 
 resolver = "2"
 

@@ -3,10 +3,7 @@ use std::process::Command;
 
 /// Generate the `cargo:` key output
 pub fn generate_cargo_keys() {
-	println!(
-		"cargo:rustc-env=SUBSTRATE_CLI_IMPL_VERSION={}",
-		get_version(get_commit())
-	)
+	println!("cargo:rustc-env=SUBSTRATE_CLI_IMPL_VERSION={}", get_version(get_commit()))
 }
 
 fn get_platform() -> String {
@@ -36,7 +33,7 @@ fn get_version(impl_commit: String) -> String {
 fn get_commit() -> String {
 	let commit = std::env::var("GIT_COMMIT").unwrap_or_default();
 	if !commit.is_empty() {
-		return commit;
+		return commit
 	}
 
 	let output = Command::new("git").args(&["rev-parse", "--short", "HEAD"]).output();
@@ -46,10 +43,10 @@ fn get_commit() -> String {
 		Ok(o) => {
 			println!("cargo:warning=Git command failed with status: {}", o.status);
 			"unknown".into()
-		}
+		},
 		Err(err) => {
 			println!("cargo:warning=Failed to execute git command: {}", err);
 			"unknown".into()
-		}
+		},
 	}
 }

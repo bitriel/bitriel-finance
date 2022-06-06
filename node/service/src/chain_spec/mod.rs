@@ -84,8 +84,5 @@ pub fn get_authority_keys_from_seed(seed: &str) -> (AccountId, AccountId, Grandp
 
 /// Generate an Aura authority key for Karura.
 pub fn get_parachain_authority_keys_from_seed(seed: &str) -> (AccountId, AuraId) {
-	(
-		get_account_id_from_seed::<sr25519::Public>(seed),
-		get_from_seed::<AuraId>(seed),
-	)
+	(get_account_id_from_seed::<sr25519::Public>(seed), get_from_seed::<AuraId>(seed))
 }

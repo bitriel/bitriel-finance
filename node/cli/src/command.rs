@@ -25,8 +25,8 @@ use service::{chain_spec, IdentifyVariant};
 
 use log::info;
 use sc_cli::{
-	ChainSpec, CliConfiguration, DefaultConfigurationValues, ImportParams, KeystoreParams, NetworkParams, Result,
-	RuntimeVersion, SharedParams, SubstrateCli,
+	ChainSpec, CliConfiguration, DefaultConfigurationValues, ImportParams, KeystoreParams,
+	NetworkParams, Result, RuntimeVersion, SharedParams, SubstrateCli,
 };
 use sc_service::config::{BasePath, PrometheusConfig};
 use sp_core::hexdisplay::HexDisplay;
@@ -85,21 +85,22 @@ impl SubstrateCli for Cli {
 			#[cfg(feature = "with-rieltest-runtime")]
 			"rieltest" => Box::new(chain_spec::rieltest::rieltest_config()?),
 			#[cfg(feature = "with-rieltest-runtime")]
-			"rieltest-latest" => Box::new(chain_spec::rieltest::rieltest_dev_config()?),
+			"rieltest-dev" => Box::new(chain_spec::rieltest::rieltest_dev_config()?),
 			#[cfg(feature = "with-rieltest-runtime")]
-			"rieltest-cardamom" => Box::new(chain_spec::rieltest::rieltest_staging_config()?),
+			"rieltest-staging" => Box::new(chain_spec::rieltest::rieltest_staging_config()?),
 
 			#[cfg(feature = "with-bitriel-runtime")]
 			"bitriel" => Box::new(chain_spec::bitriel::bitriel_config()?),
 			#[cfg(feature = "with-bitriel-runtime")]
 			"bitriel-selendra" => Box::new(chain_spec::bitriel::bitriel_staging_config()?),
 			#[cfg(feature = "with-bitriel-runtime")]
-			"bitriel-dev" => Box::new(chain_spec::bitriel::bitriel_dev_config()?),
+			"bitriel-staging" => Box::new(chain_spec::bitriel::bitriel_dev_config()?),
 			path => {
 				let path = std::path::PathBuf::from(path);
 
-				let chain_spec = Box::new(service::chain_spec::DummyChainSpec::from_json_file(path.clone())?)
-					as Box<dyn service::ChainSpec>;
+				let chain_spec =
+					Box::new(service::chain_spec::DummyChainSpec::from_json_file(path.clone())?)
+						as Box<dyn service::ChainSpec>;
 
 				if chain_spec.is_bitriel() {
 					#[cfg(feature = "with-bitriel-runtime")]
@@ -116,7 +117,7 @@ impl SubstrateCli for Cli {
 					#[cfg(not(feature = "with-rieltest-runtime"))]
 					return Err(service::RIELTEST_RUNTIME_NOT_AVAILABLE.into());
 				}
-			}
+			},
 		})
 	}
 
@@ -190,7 +191,8 @@ fn set_default_ss58_version(spec: &Box<dyn service::ChainSpec>) {
 }
 
 #[allow(dead_code)]
-const DEV_ONLY_ERROR_PATTERN: &str = "can only use subcommand with --chain [bitriel-dev, pc-dev, dev], got ";
+const DEV_ONLY_ERROR_PATTERN: &str =
+	"can only use subcommand with --chain [bitriel-dev, pc-dev, dev], got ";
 
 #[allow(dead_code)]
 fn ensure_dev(spec: &Box<dyn service::ChainSpec>) -> std::result::Result<(), String> {
@@ -249,7 +251,7 @@ pub fn run() -> sc_cli::Result<()> {
 				let (client, _, _, _) = service::new_chain_ops(&mut config)?;
 				cmd.run(client)
 			})
-		}
+		},
 
 		Some(Subcommand::Benchmark(cmd)) => {
 			let runner = cli.create_runner(cmd)?;
@@ -260,7 +262,7 @@ pub fn run() -> sc_cli::Result<()> {
 			with_runtime_or_err!(chain_spec, {
 				return runner.sync_run(|config| cmd.run::<Block, Executor>(config));
 			})
-		}
+		},
 
 		Some(Subcommand::Key(cmd)) => cmd.run(&cli),
 		Some(Subcommand::Sign(cmd)) => cmd.run(),
@@ -270,7 +272,7 @@ pub fn run() -> sc_cli::Result<()> {
 		Some(Subcommand::BuildSpec(cmd)) => {
 			let runner = cli.create_runner(cmd)?;
 			runner.sync_run(|config| cmd.run(config.chain_spec, config.network))
-		}
+		},
 
 		Some(Subcommand::CheckBlock(cmd)) => {
 			let runner = cli.create_runner(cmd)?;
@@ -282,7 +284,7 @@ pub fn run() -> sc_cli::Result<()> {
 				let (client, _, import_queue, task_manager) = service::new_chain_ops(&mut config)?;
 				Ok((cmd.run(client, import_queue), task_manager))
 			})
-		}
+		},
 
 		Some(Subcommand::ExportBlocks(cmd)) => {
 			let runner = cli.create_runner(cmd)?;
@@ -294,7 +296,7 @@ pub fn run() -> sc_cli::Result<()> {
 				let (client, _, _, task_manager) = service::new_chain_ops(&mut config)?;
 				Ok((cmd.run(client, config.database), task_manager))
 			})
-		}
+		},
 
 		Some(Subcommand::ExportState(cmd)) => {
 			let runner = cli.create_runner(cmd)?;
@@ -306,7 +308,7 @@ pub fn run() -> sc_cli::Result<()> {
 				let (client, _, _, task_manager) = service::new_chain_ops(&mut config)?;
 				Ok((cmd.run(client, config.chain_spec), task_manager))
 			})
-		}
+		},
 
 		Some(Subcommand::ImportBlocks(cmd)) => {
 			let runner = cli.create_runner(cmd)?;
@@ -318,7 +320,7 @@ pub fn run() -> sc_cli::Result<()> {
 				let (client, _, import_queue, task_manager) = service::new_chain_ops(&mut config)?;
 				Ok((cmd.run(client, import_queue), task_manager))
 			})
-		}
+		},
 
 		Some(Subcommand::PurgeChain(cmd)) => {
 			let runner = cli.create_runner(cmd)?;
@@ -333,18 +335,19 @@ pub fn run() -> sc_cli::Result<()> {
 
 				let selendra_cli = RelayChainCli::new(
 					&config,
-					[RelayChainCli::executable_name()]
-						.iter()
-						.chain(cli.relaychain_args.iter()),
+					[RelayChainCli::executable_name()].iter().chain(cli.relaychain_args.iter()),
 				);
 
-				let selendra_config =
-					SubstrateCli::create_configuration(&selendra_cli, &selendra_cli, config.tokio_handle.clone())
-						.map_err(|err| format!("Relay chain argument error: {}", err))?;
+				let selendra_config = SubstrateCli::create_configuration(
+					&selendra_cli,
+					&selendra_cli,
+					config.tokio_handle.clone(),
+				)
+				.map_err(|err| format!("Relay chain argument error: {}", err))?;
 
 				cmd.run(config, selendra_config)
 			})
-		}
+		},
 
 		Some(Subcommand::Revert(cmd)) => {
 			let runner = cli.create_runner(cmd)?;
@@ -356,7 +359,7 @@ pub fn run() -> sc_cli::Result<()> {
 				let (client, backend, _, task_manager) = service::new_chain_ops(&mut config)?;
 				Ok((cmd.run(client, backend), task_manager))
 			})
-		}
+		},
 
 		Some(Subcommand::ExportGenesisState(params)) => {
 			let mut builder = sc_cli::LoggerBuilder::new("");
@@ -367,8 +370,8 @@ pub fn run() -> sc_cli::Result<()> {
 			let state_version = Cli::native_runtime_version(&chain_spec).state_version();
 			let output_buf = with_runtime_or_err!(chain_spec, {
 				{
-					let block: Block =
-						generate_genesis_block(&chain_spec, state_version).map_err(|e| format!("{:?}", e))?;
+					let block: Block = generate_genesis_block(&chain_spec, state_version)
+						.map_err(|e| format!("{:?}", e))?;
 					let raw_header = block.header().encode();
 					let buf = if params.raw {
 						raw_header
@@ -386,14 +389,15 @@ pub fn run() -> sc_cli::Result<()> {
 			}
 
 			Ok(())
-		}
+		},
 
 		Some(Subcommand::ExportGenesisWasm(params)) => {
 			let mut builder = sc_cli::LoggerBuilder::new("");
 			builder.with_profiling(sc_tracing::TracingReceiver::Log, "");
 			let _ = builder.init();
 
-			let raw_wasm_blob = extract_genesis_wasm(&cli.load_spec(&params.chain.clone().unwrap_or_default())?)?;
+			let raw_wasm_blob =
+				extract_genesis_wasm(&cli.load_spec(&params.chain.clone().unwrap_or_default())?)?;
 			let output_buf = if params.raw {
 				raw_wasm_blob
 			} else {
@@ -407,7 +411,7 @@ pub fn run() -> sc_cli::Result<()> {
 			}
 
 			Ok(())
-		}
+		},
 
 		#[cfg(feature = "try-runtime")]
 		Some(Subcommand::TryRuntime(cmd)) => {
@@ -420,12 +424,15 @@ pub fn run() -> sc_cli::Result<()> {
 			with_runtime_or_err!(chain_spec, {
 				return runner.async_run(|config| {
 					let registry = config.prometheus_config.as_ref().map(|cfg| &cfg.registry);
-					let task_manager = sc_service::TaskManager::new(config.tokio_handle.clone(), registry)
-						.map_err(|e| sc_cli::Error::Service(sc_service::Error::Prometheus(e)))?;
+					let task_manager =
+						sc_service::TaskManager::new(config.tokio_handle.clone(), registry)
+							.map_err(|e| {
+								sc_cli::Error::Service(sc_service::Error::Prometheus(e))
+							})?;
 					Ok((cmd.run::<Block, Executor>(config), task_manager))
-				});
+				})
 			})
-		}
+		},
 
 		None => {
 			let runner = cli.create_runner(&cli.run.normalize())?;
@@ -444,40 +451,43 @@ pub fn run() -> sc_cli::Result<()> {
 					#[cfg(feature = "with-rieltest-runtime")]
 					return service::rieltest_dev(config, cli.instant_sealing).map_err(Into::into);
 					#[cfg(not(feature = "with-rieltest-runtime"))]
-					return Err(service::RIELTEST_RUNTIME_NOT_AVAILABLE.into());
+					return Err(service::RIELTEST_RUNTIME_NOT_AVAILABLE.into())
 				} else if cli.instant_sealing {
 					return Err("Instant sealing can be turned on only in `--dev` mode".into());
 				}
 
 				let selendra_cli = RelayChainCli::new(
 					&config,
-					[RelayChainCli::executable_name()]
-						.iter()
-						.chain(cli.relaychain_args.iter()),
+					[RelayChainCli::executable_name()].iter().chain(cli.relaychain_args.iter()),
 				);
 
 				let id = ParaId::from(para_id);
 
-				let selendra_config =
-					SubstrateCli::create_configuration(&selendra_cli, &selendra_cli, config.tokio_handle.clone())
-						.map_err(|err| format!("Relay chain argument error: {}", err))?;
+				let selendra_config = SubstrateCli::create_configuration(
+					&selendra_cli,
+					&selendra_cli,
+					config.tokio_handle.clone(),
+				)
+				.map_err(|err| format!("Relay chain argument error: {}", err))?;
 
 				info!("Parachain id: {:?}", id);
-				info!(
-					"Is collating: {}",
-					if config.role.is_authority() { "yes" } else { "no" }
-				);
+				info!("Is collating: {}", if config.role.is_authority() { "yes" } else { "no" });
 
 				with_runtime_or_err!(config.chain_spec, {
 					{
-						service::start_node::<RuntimeApi>(config, selendra_config, collator_options, id)
-							.await
-							.map(|r| r.0)
-							.map_err(Into::into)
+						service::start_node::<RuntimeApi>(
+							config,
+							selendra_config,
+							collator_options,
+							id,
+						)
+						.await
+						.map(|r| r.0)
+						.map_err(Into::into)
 					}
 				})
 			})
-		}
+		},
 	}
 }
 
@@ -559,11 +569,7 @@ impl CliConfiguration<Self> for RelayChainCli {
 	fn chain_id(&self, is_dev: bool) -> Result<String> {
 		let chain_id = self.base.base.chain_id(is_dev)?;
 
-		Ok(if chain_id.is_empty() {
-			self.chain_id.clone().unwrap_or_default()
-		} else {
-			chain_id
-		})
+		Ok(if chain_id.is_empty() { self.chain_id.clone().unwrap_or_default() } else { chain_id })
 	}
 
 	fn role(&self, is_dev: bool) -> Result<sc_service::Role> {

@@ -8,6 +8,7 @@ members = [
     "node/inspect",
     "node/rpc",
     "node/cli",
+    "node"
 
 ]
 

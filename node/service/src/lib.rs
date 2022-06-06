@@ -28,7 +28,9 @@ use cumulus_client_service::{
 	prepare_node_config, start_collator, start_full_node, StartCollatorParams, StartFullNodeParams,
 };
 use cumulus_primitives_core::ParaId;
-use cumulus_primitives_parachain_inherent::{MockValidationDataInherentDataProvider, MockXcmConfig};
+use cumulus_primitives_parachain_inherent::{
+	MockValidationDataInherentDataProvider, MockXcmConfig,
+};
 use cumulus_relay_chain_inprocess_interface::build_inprocess_relay_chain;
 use cumulus_relay_chain_interface::{RelayChainError, RelayChainInterface, RelayChainResult};
 use cumulus_relay_chain_rpc_interface::RelayChainRPCInterface;
@@ -41,7 +43,8 @@ pub use sc_service::{
 	ChainSpec,
 };
 use sc_service::{
-	error::Error as ServiceError, Configuration, PartialComponents, Role, TFullBackend, TFullClient, TaskManager,
+	error::Error as ServiceError, Configuration, PartialComponents, Role, TFullBackend,
+	TFullClient, TaskManager,
 };
 use sc_telemetry::{Telemetry, TelemetryHandle, TelemetryWorker, TelemetryWorkerHandle};
 pub use sp_api::ConstructRuntimeApi;
@@ -66,10 +69,8 @@ mod instant_finalize;
 type HostFunctions = sp_io::SubstrateHostFunctions;
 
 #[cfg(feature = "runtime-benchmarks")]
-type HostFunctions = (
-	sp_io::SubstrateHostFunctions,
-	frame_benchmarking::benchmarking::HostFunctions,
-);
+type HostFunctions =
+	(sp_io::SubstrateHostFunctions, frame_benchmarking::benchmarking::HostFunctions);
 
 #[cfg(feature = "with-rieltest-runtime")]
 mod rieltest_executor {
@@ -86,7 +87,7 @@ mod rieltest_executor {
 		}
 
 		fn native_version() -> sc_executor::NativeVersion {
-			rieltest_runtime::native_version()  
+			rieltest_runtime::native_version()
 		}
 	}
 }
@@ -174,7 +175,8 @@ pub fn new_partial<RuntimeApi>(
 >
 where
 	RuntimeApi: ConstructRuntimeApi<Block, FullClient<RuntimeApi>> + Send + Sync + 'static,
-	RuntimeApi::RuntimeApi: RuntimeApiCollection<StateBackend = sc_client_api::StateBackendFor<FullBackend, Block>>,
+	RuntimeApi::RuntimeApi:
+		RuntimeApiCollection<StateBackend = sc_client_api::StateBackendFor<FullBackend, Block>>,
 	RuntimeApi::RuntimeApi: sp_consensus_aura::AuraApi<Block, AuraId>,
 {
 	let telemetry = config
@@ -196,11 +198,12 @@ where
 		config.runtime_cache_size,
 	);
 
-	let (client, backend, keystore_container, task_manager) = sc_service::new_full_parts::<Block, RuntimeApi, _>(
-		config,
-		telemetry.as_ref().map(|(_, telemetry)| telemetry.handle()),
-		executor,
-	)?;
+	let (client, backend, keystore_container, task_manager) =
+		sc_service::new_full_parts::<Block, RuntimeApi, _>(
+			config,
+			telemetry.as_ref().map(|(_, telemetry)| telemetry.handle()),
+			executor,
+		)?;
 	let client = Arc::new(client);
 
 	let telemetry_worker_handle = telemetry.as_ref().map(|(worker, _)| worker.handle());
@@ -220,11 +223,7 @@ where
 		client.clone(),
 	);
 
-	let select_chain = if dev {
-		Some(LongestChain::new(backend.clone()))
-	} else {
-		None
-	};
+	let select_chain = if dev { Some(LongestChain::new(backend.clone())) } else { None };
 
 	let import_queue = if dev {
 		if instant_sealing {
@@ -327,11 +326,14 @@ async fn build_relay_chain_interface(
 	collator_options: CollatorOptions,
 ) -> RelayChainResult<(Arc<(dyn RelayChainInterface + 'static)>, Option<CollatorPair>)> {
 	match collator_options.relay_chain_rpc_url {
-		Some(relay_chain_url) => Ok((
-			Arc::new(RelayChainRPCInterface::new(relay_chain_url).await?) as Arc<_>,
-			None,
-		)),
-		None => build_inprocess_relay_chain(selendra_config, parachain_config, telemetry_worker_handle, task_manager),
+		Some(relay_chain_url) =>
+			Ok((Arc::new(RelayChainRPCInterface::new(relay_chain_url).await?) as Arc<_>, None)),
+		None => build_inprocess_relay_chain(
+			selendra_config,
+			parachain_config,
+			telemetry_worker_handle,
+			task_manager,
+		),
 	}
 }
 
@@ -350,11 +352,14 @@ async fn start_node_impl<RB, RuntimeApi, BIC>(
 	build_consensus: BIC,
 ) -> sc_service::error::Result<(TaskManager, Arc<FullClient<RuntimeApi>>)>
 where
-	RB: Fn(Arc<FullClient<RuntimeApi>>) -> Result<jsonrpc_core::IoHandler<sc_rpc::Metadata>, sc_service::Error>
+	RB: Fn(
+			Arc<FullClient<RuntimeApi>>,
+		) -> Result<jsonrpc_core::IoHandler<sc_rpc::Metadata>, sc_service::Error>
 		+ Send
 		+ 'static,
 	RuntimeApi: ConstructRuntimeApi<Block, FullClient<RuntimeApi>> + Send + Sync + 'static,
-	RuntimeApi::RuntimeApi: RuntimeApiCollection<StateBackend = sc_client_api::StateBackendFor<FullBackend, Block>>,
+	RuntimeApi::RuntimeApi:
+		RuntimeApiCollection<StateBackend = sc_client_api::StateBackendFor<FullBackend, Block>>,
 	RuntimeApi::RuntimeApi: sp_consensus_aura::AuraApi<Block, AuraId>,
 	BIC: FnOnce(
 		Arc<FullClient<RuntimeApi>>,
@@ -369,7 +374,7 @@ where
 	) -> Result<Box<dyn ParachainConsensus<Block>>, sc_service::Error>,
 {
 	if matches!(parachain_config.role, Role::Light) {
-		return Err("Light client not supported!".into());
+		return Err("Light client not supported!".into())
 	}
 
 	let parachain_config = prepare_node_config(parachain_config);
@@ -400,15 +405,18 @@ where
 	let prometheus_registry = parachain_config.prometheus_registry().cloned();
 	let transaction_pool = params.transaction_pool.clone();
 	let import_queue = cumulus_client_service::SharedImportQueue::new(params.import_queue);
-	let (network, system_rpc_tx, start_network) = sc_service::build_network(sc_service::BuildNetworkParams {
-		config: &parachain_config,
-		client: client.clone(),
-		transaction_pool: transaction_pool.clone(),
-		spawn_handle: task_manager.spawn_handle(),
-		import_queue: import_queue.clone(),
-		block_announce_validator_builder: Some(Box::new(|_| Box::new(block_announce_validator))),
-		warp_sync: None,
-	})?;
+	let (network, system_rpc_tx, start_network) =
+		sc_service::build_network(sc_service::BuildNetworkParams {
+			config: &parachain_config,
+			client: client.clone(),
+			transaction_pool: transaction_pool.clone(),
+			spawn_handle: task_manager.spawn_handle(),
+			import_queue: import_queue.clone(),
+			block_announce_validator_builder: Some(Box::new(|_| {
+				Box::new(block_announce_validator)
+			})),
+			warp_sync: None,
+		})?;
 
 	let rpc_extensions_builder = {
 		let client = client.clone();
@@ -514,7 +522,8 @@ pub async fn start_node<RuntimeApi>(
 ) -> sc_service::error::Result<(TaskManager, Arc<FullClient<RuntimeApi>>)>
 where
 	RuntimeApi: ConstructRuntimeApi<Block, FullClient<RuntimeApi>> + Send + Sync + 'static,
-	RuntimeApi::RuntimeApi: RuntimeApiCollection<StateBackend = sc_client_api::StateBackendFor<FullBackend, Block>>,
+	RuntimeApi::RuntimeApi:
+		RuntimeApiCollection<StateBackend = sc_client_api::StateBackendFor<FullBackend, Block>>,
 	RuntimeApi::RuntimeApi: sp_consensus_aura::AuraApi<Block, AuraId>,
 {
 	start_node_impl(
@@ -542,20 +551,13 @@ where
 				telemetry.clone(),
 			);
 
-			Ok(AuraConsensus::build::<
-				sp_consensus_aura::sr25519::AuthorityPair,
-				_,
-				_,
-				_,
-				_,
-				_,
-				_,
-			>(BuildAuraConsensusParams {
-				proposer_factory,
-				create_inherent_data_providers: move |_, (relay_parent, validation_data)| {
-					let relay_chain_interface = relay_chain_interface.clone();
-					async move {
-						let parachain_inherent =
+			Ok(AuraConsensus::build::<sp_consensus_aura::sr25519::AuthorityPair, _, _, _, _, _, _>(
+				BuildAuraConsensusParams {
+					proposer_factory,
+					create_inherent_data_providers: move |_, (relay_parent, validation_data)| {
+						let relay_chain_interface = relay_chain_interface.clone();
+						async move {
+							let parachain_inherent =
 							cumulus_primitives_parachain_inherent::ParachainInherentData::create_at(
 								relay_parent,
 								&relay_chain_interface,
@@ -564,32 +566,35 @@ where
 							)
 							.await;
 
-						let time = sp_timestamp::InherentDataProvider::from_system_time();
+							let time = sp_timestamp::InherentDataProvider::from_system_time();
 
-						let slot = sp_consensus_aura::inherents::InherentDataProvider::from_timestamp_and_slot_duration(
+							let slot = sp_consensus_aura::inherents::InherentDataProvider::from_timestamp_and_slot_duration(
 							*time,
 							slot_duration,
 						);
 
-						let parachain_inherent = parachain_inherent.ok_or_else(|| {
-							Box::<dyn std::error::Error + Send + Sync>::from("Failed to create parachain inherent")
-						})?;
-						Ok((time, slot, parachain_inherent))
-					}
+							let parachain_inherent = parachain_inherent.ok_or_else(|| {
+								Box::<dyn std::error::Error + Send + Sync>::from(
+									"Failed to create parachain inherent",
+								)
+							})?;
+							Ok((time, slot, parachain_inherent))
+						}
+					},
+					block_import: client.clone(),
+					para_client: client,
+					backoff_authoring_blocks: Option::<()>::None,
+					sync_oracle,
+					keystore,
+					force_authoring,
+					slot_duration,
+					// We got around 500ms for proposing
+					block_proposal_slot_portion: SlotProportion::new(1f32 / 24f32),
+					// And a maximum of 750ms if slots are skipped
+					max_block_proposal_slot_portion: Some(SlotProportion::new(1f32 / 16f32)),
+					telemetry,
 				},
-				block_import: client.clone(),
-				para_client: client,
-				backoff_authoring_blocks: Option::<()>::None,
-				sync_oracle,
-				keystore,
-				force_authoring,
-				slot_duration,
-				// We got around 500ms for proposing
-				block_proposal_slot_portion: SlotProportion::new(1f32 / 24f32),
-				// And a maximum of 750ms if slots are skipped
-				max_block_proposal_slot_portion: Some(SlotProportion::new(1f32 / 16f32)),
-				telemetry,
-			}))
+			))
 		},
 	)
 	.await
@@ -616,13 +621,8 @@ pub fn new_chain_ops(
 	if config.chain_spec.is_rieltest_dev() || config.chain_spec.is_rieltest() {
 		#[cfg(feature = "with-rieltest-runtime")]
 		{
-			let PartialComponents {
-				client,
-				backend,
-				import_queue,
-				task_manager,
-				..
-			} = new_partial(config, config.chain_spec.is_rieltest_dev(), false)?;
+			let PartialComponents { client, backend, import_queue, task_manager, .. } =
+				new_partial(config, config.chain_spec.is_rieltest_dev(), false)?;
 			Ok((Arc::new(Client::Rieltest(client)), backend, import_queue, task_manager))
 		}
 		#[cfg(not(feature = "with-rieltest-runtime"))]
@@ -630,13 +630,8 @@ pub fn new_chain_ops(
 	} else {
 		#[cfg(feature = "with-bitriel-runtime")]
 		{
-			let PartialComponents {
-				client,
-				backend,
-				import_queue,
-				task_manager,
-				..
-			} = new_partial::<bitriel_runtime::RuntimeApi>(config, false, false)?;
+			let PartialComponents { client, backend, import_queue, task_manager, .. } =
+				new_partial::<bitriel_runtime::RuntimeApi>(config, false, false)?;
 			Ok((Arc::new(Client::Bitriel(client)), backend, import_queue, task_manager))
 		}
 		#[cfg(not(feature = "with-bitriel-runtime"))]
@@ -645,7 +640,10 @@ pub fn new_chain_ops(
 }
 
 #[cfg(feature = "with-rieltest-runtime")]
-fn inner_rieltest_dev(config: Configuration, instant_sealing: bool) -> Result<TaskManager, ServiceError> {
+fn inner_rieltest_dev(
+	config: Configuration,
+	instant_sealing: bool,
+) -> Result<TaskManager, ServiceError> {
 	let sc_service::PartialComponents {
 		client,
 		backend,
@@ -657,22 +655,21 @@ fn inner_rieltest_dev(config: Configuration, instant_sealing: bool) -> Result<Ta
 		other: (mut telemetry, _),
 	} = new_partial::<rieltest_runtime::RuntimeApi>(&config, true, instant_sealing)?;
 
-	let (network, system_rpc_tx, network_starter) = sc_service::build_network(sc_service::BuildNetworkParams {
-		config: &config,
-		client: client.clone(),
-		transaction_pool: transaction_pool.clone(),
-		spawn_handle: task_manager.spawn_handle(),
-		import_queue,
-		block_announce_validator_builder: None,
-		warp_sync: None,
-	})?;
+	let (network, system_rpc_tx, network_starter) =
+		sc_service::build_network(sc_service::BuildNetworkParams {
+			config: &config,
+			client: client.clone(),
+			transaction_pool: transaction_pool.clone(),
+			spawn_handle: task_manager.spawn_handle(),
+			import_queue,
+			block_announce_validator_builder: None,
+			warp_sync: None,
+		})?;
 
 	if config.offchain_worker.enabled {
 		let offchain_workers = Arc::new(sc_offchain::OffchainWorkers::new_with_options(
 			client.clone(),
-			sc_offchain::OffchainWorkerOptions {
-				enable_http_requests: false,
-			},
+			sc_offchain::OffchainWorkerOptions { enable_http_requests: false },
 		));
 
 		// Start the offchain workers to have
@@ -695,8 +692,8 @@ fn inner_rieltest_dev(config: Configuration, instant_sealing: bool) -> Result<Ta
 	let force_authoring = config.force_authoring;
 	let backoff_authoring_blocks: Option<()> = None;
 
-	let select_chain =
-		maybe_select_chain.expect("In rieltest dev mode, `new_partial` will return some `select_chain`; qed");
+	let select_chain = maybe_select_chain
+		.expect("In rieltest dev mode, `new_partial` will return some `select_chain`; qed");
 
 	let command_sink = if role.is_authority() {
 		let proposer_factory = sc_basic_authorship::ProposerFactory::new(
@@ -723,8 +720,8 @@ fn inner_rieltest_dev(config: Configuration, instant_sealing: bool) -> Result<Ta
 
 			let client_for_cidp = client.clone();
 
-			let authorship_future =
-				sc_consensus_manual_seal::run_manual_seal(sc_consensus_manual_seal::ManualSealParams {
+			let authorship_future = sc_consensus_manual_seal::run_manual_seal(
+				sc_consensus_manual_seal::ManualSealParams {
 					block_import: client.clone(),
 					env: proposer_factory,
 					client: client.clone(),
@@ -752,10 +749,14 @@ fn inner_rieltest_dev(config: Configuration, instant_sealing: bool) -> Result<Ta
 								raw_downward_messages: vec![],
 								raw_horizontal_messages: vec![],
 							};
-							Ok((sp_timestamp::InherentDataProvider::from_system_time(), mocked_parachain))
+							Ok((
+								sp_timestamp::InherentDataProvider::from_system_time(),
+								mocked_parachain,
+							))
 						}
 					},
-				});
+				},
+			);
 			// we spawn the future on a background thread managed by service.
 			task_manager.spawn_essential_handle().spawn_blocking(
 				"instant-seal",
@@ -768,62 +769,66 @@ fn inner_rieltest_dev(config: Configuration, instant_sealing: bool) -> Result<Ta
 			let slot_duration = sc_consensus_aura::slot_duration(&*client)?;
 			let client_for_cidp = client.clone();
 
-			let aura = sc_consensus_aura::start_aura::<AuraPair, _, _, _, _, _, _, _, _, _, _, _>(StartAuraParams {
-				slot_duration: sc_consensus_aura::slot_duration(&*client)?,
-				client: client.clone(),
-				select_chain,
-				block_import: instant_finalize::InstantFinalizeBlockImport::new(client.clone()),
-				proposer_factory,
-				create_inherent_data_providers: move |block: Hash, ()| {
-					let current_para_block = client_for_cidp
-						.number(block)
-						.expect("Header lookup should succeed")
-						.expect("Header passed in as parent should be present in backend.");
-					let client_for_xcm = client_for_cidp.clone();
+			let aura = sc_consensus_aura::start_aura::<AuraPair, _, _, _, _, _, _, _, _, _, _, _>(
+				StartAuraParams {
+					slot_duration: sc_consensus_aura::slot_duration(&*client)?,
+					client: client.clone(),
+					select_chain,
+					block_import: instant_finalize::InstantFinalizeBlockImport::new(client.clone()),
+					proposer_factory,
+					create_inherent_data_providers: move |block: Hash, ()| {
+						let current_para_block = client_for_cidp
+							.number(block)
+							.expect("Header lookup should succeed")
+							.expect("Header passed in as parent should be present in backend.");
+						let client_for_xcm = client_for_cidp.clone();
 
-					async move {
-						let timestamp = sp_timestamp::InherentDataProvider::from_system_time();
+						async move {
+							let timestamp = sp_timestamp::InherentDataProvider::from_system_time();
 
-						let slot = sp_consensus_aura::inherents::InherentDataProvider::from_timestamp_and_slot_duration(
+							let slot = sp_consensus_aura::inherents::InherentDataProvider::from_timestamp_and_slot_duration(
 							*timestamp,
 							slot_duration,
 						);
 
-						let mocked_parachain = MockValidationDataInherentDataProvider {
-							current_para_block,
-							relay_offset: 1000,
-							relay_blocks_per_para_block: 2,
-							xcm_config: MockXcmConfig::new(
-								&*client_for_xcm,
-								block,
-								Default::default(),
-								Default::default(),
-							),
-							raw_downward_messages: vec![],
-							raw_horizontal_messages: vec![],
-						};
+							let mocked_parachain = MockValidationDataInherentDataProvider {
+								current_para_block,
+								relay_offset: 1000,
+								relay_blocks_per_para_block: 2,
+								xcm_config: MockXcmConfig::new(
+									&*client_for_xcm,
+									block,
+									Default::default(),
+									Default::default(),
+								),
+								raw_downward_messages: vec![],
+								raw_horizontal_messages: vec![],
+							};
 
-						Ok((timestamp, slot, mocked_parachain))
-					}
+							Ok((timestamp, slot, mocked_parachain))
+						}
+					},
+					force_authoring,
+					backoff_authoring_blocks,
+					keystore: keystore_container.sync_keystore(),
+					can_author_with: sp_consensus::AlwaysCanAuthor,
+					sync_oracle: network.clone(),
+					justification_sync_link: network.clone(),
+					// We got around 500ms for proposing
+					block_proposal_slot_portion: SlotProportion::new(1f32 / 24f32),
+					// And a maximum of 750ms if slots are skipped
+					max_block_proposal_slot_portion: Some(SlotProportion::new(1f32 / 16f32)),
+					telemetry: telemetry.as_ref().map(|x| x.handle()),
 				},
-				force_authoring,
-				backoff_authoring_blocks,
-				keystore: keystore_container.sync_keystore(),
-				can_author_with: sp_consensus::AlwaysCanAuthor,
-				sync_oracle: network.clone(),
-				justification_sync_link: network.clone(),
-				// We got around 500ms for proposing
-				block_proposal_slot_portion: SlotProportion::new(1f32 / 24f32),
-				// And a maximum of 750ms if slots are skipped
-				max_block_proposal_slot_portion: Some(SlotProportion::new(1f32 / 16f32)),
-				telemetry: telemetry.as_ref().map(|x| x.handle()),
-			})?;
+			)?;
 
 			// the AURA authoring task is considered essential, i.e. if it
 			// fails we take down the service with it.
-			task_manager
-				.spawn_essential_handle()
-				.spawn_blocking("aura", Some("block-authoring"), aura);
+			task_manager.spawn_essential_handle().spawn_blocking(
+				"aura",
+				Some("block-authoring"),
+				aura,
+			);
 
 			None
 		}
@@ -866,6 +871,9 @@ fn inner_rieltest_dev(config: Configuration, instant_sealing: bool) -> Result<Ta
 }
 
 #[cfg(feature = "with-rieltest-runtime")]
-pub fn rieltest_dev(config: Configuration, instant_sealing: bool) -> Result<TaskManager, ServiceError> {
+pub fn rieltest_dev(
+	config: Configuration,
+	instant_sealing: bool,
+) -> Result<TaskManager, ServiceError> {
 	inner_rieltest_dev(config, instant_sealing)
 }

@@ -10,3 +10,4 @@ bin/node/runtime/wasm/target/
 **/._*
 **/.criterion/
 .vscode
+run

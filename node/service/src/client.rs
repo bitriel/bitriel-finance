@@ -151,7 +151,6 @@ impl ClientHandle for Client {
 			Self::Rieltest(client) => T::execute_with_client::<_, _, crate::FullBackend>(t, client.clone()),
 			#[cfg(feature = "with-bitriel-runtime")]
 			Self::Bitriel(client) => T::execute_with_client::<_, _, crate::FullBackend>(t, client.clone()),
-			
 		}
 	}
 }
@@ -163,19 +162,20 @@ impl sc_client_api::UsageProvider<Block> for Client {
 			Self::Rieltest(client) => client.usage_info(),
 			#[cfg(feature = "with-bitriel-runtime")]
 			Self::Bitriel(client) => client.usage_info(),
-			
 		}
 	}
 }
 
 impl sc_client_api::BlockBackend<Block> for Client {
-	fn block_body(&self, id: &BlockId<Block>) -> sp_blockchain::Result<Option<Vec<<Block as BlockT>::Extrinsic>>> {
+	fn block_body(
+		&self,
+		id: &BlockId<Block>,
+	) -> sp_blockchain::Result<Option<Vec<<Block as BlockT>::Extrinsic>>> {
 		match self {
 			#[cfg(feature = "with-rieltest-runtime")]
 			Self::Rieltest(client) => client.block_body(id),
 			#[cfg(feature = "with-bitriel-runtime")]
 			Self::Bitriel(client) => client.block_body(id),
-			
 		}
 	}
 
@@ -185,7 +185,6 @@ impl sc_client_api::BlockBackend<Block> for Client {
 			Self::Rieltest(client) => client.block(id),
 			#[cfg(feature = "with-bitriel-runtime")]
 			Self::Bitriel(client) => client.block(id),
-			
 		}
 	}
 
@@ -195,7 +194,6 @@ impl sc_client_api::BlockBackend<Block> for Client {
 			Self::Rieltest(client) => client.block_status(id),
 			#[cfg(feature = "with-bitriel-runtime")]
 			Self::Bitriel(client) => client.block_status(id),
-			
 		}
 	}
 
@@ -205,69 +203,82 @@ impl sc_client_api::BlockBackend<Block> for Client {
 			Self::Rieltest(client) => client.justifications(id),
 			#[cfg(feature = "with-bitriel-runtime")]
 			Self::Bitriel(client) => client.justifications(id),
-			
 		}
 	}
 
-	fn block_hash(&self, number: NumberFor<Block>) -> sp_blockchain::Result<Option<<Block as BlockT>::Hash>> {
+	fn block_hash(
+		&self,
+		number: NumberFor<Block>,
+	) -> sp_blockchain::Result<Option<<Block as BlockT>::Hash>> {
 		match self {
 			#[cfg(feature = "with-rieltest-runtime")]
 			Self::Rieltest(client) => client.block_hash(number),
 			#[cfg(feature = "with-bitriel-runtime")]
 			Self::Bitriel(client) => client.block_hash(number),
-			
 		}
 	}
 
-	fn indexed_transaction(&self, hash: &<Block as BlockT>::Hash) -> sp_blockchain::Result<Option<Vec<u8>>> {
+	fn indexed_transaction(
+		&self,
+		hash: &<Block as BlockT>::Hash,
+	) -> sp_blockchain::Result<Option<Vec<u8>>> {
 		match self {
 			#[cfg(feature = "with-rieltest-runtime")]
 			Self::Rieltest(client) => client.indexed_transaction(hash),
 			#[cfg(feature = "with-bitriel-runtime")]
 			Self::Bitriel(client) => client.indexed_transaction(hash),
-			
 		}
 	}
 
-	fn has_indexed_transaction(&self, hash: &<Block as BlockT>::Hash) -> sp_blockchain::Result<bool> {
+	fn has_indexed_transaction(
+		&self,
+		hash: &<Block as BlockT>::Hash,
+	) -> sp_blockchain::Result<bool> {
 		match self {
 			#[cfg(feature = "with-rieltest-runtime")]
 			Self::Rieltest(client) => client.has_indexed_transaction(hash),
 			#[cfg(feature = "with-bitriel-runtime")]
 			Self::Bitriel(client) => client.has_indexed_transaction(hash),
-			
 		}
 	}
 
-	fn block_indexed_body(&self, id: &BlockId<Block>) -> sp_blockchain::Result<Option<Vec<Vec<u8>>>> {
+	fn block_indexed_body(
+		&self,
+		id: &BlockId<Block>,
+	) -> sp_blockchain::Result<Option<Vec<Vec<u8>>>> {
 		match self {
 			#[cfg(feature = "with-rieltest-runtime")]
 			Self::Rieltest(client) => client.block_indexed_body(id),
 			#[cfg(feature = "with-bitriel-runtime")]
 			Self::Bitriel(client) => client.block_indexed_body(id),
-			
 		}
 	}
 }
 
 impl sc_client_api::StorageProvider<Block, crate::FullBackend> for Client {
-	fn storage(&self, id: &BlockId<Block>, key: &StorageKey) -> sp_blockchain::Result<Option<StorageData>> {
+	fn storage(
+		&self,
+		id: &BlockId<Block>,
+		key: &StorageKey,
+	) -> sp_blockchain::Result<Option<StorageData>> {
 		match self {
 			#[cfg(feature = "with-rieltest-runtime")]
 			Self::Rieltest(client) => client.storage(id, key),
 			#[cfg(feature = "with-bitriel-runtime")]
 			Self::Bitriel(client) => client.storage(id, key),
-			
 		}
 	}
 
-	fn storage_keys(&self, id: &BlockId<Block>, key_prefix: &StorageKey) -> sp_blockchain::Result<Vec<StorageKey>> {
+	fn storage_keys(
+		&self,
+		id: &BlockId<Block>,
+		key_prefix: &StorageKey,
+	) -> sp_blockchain::Result<Vec<StorageKey>> {
 		match self {
 			#[cfg(feature = "with-rieltest-runtime")]
 			Self::Rieltest(client) => client.storage_keys(id, key_prefix),
 			#[cfg(feature = "with-bitriel-runtime")]
 			Self::Bitriel(client) => client.storage_keys(id, key_prefix),
-			
 		}
 	}
 
@@ -281,7 +292,6 @@ impl sc_client_api::StorageProvider<Block, crate::FullBackend> for Client {
 			Self::Rieltest(client) => client.storage_hash(id, key),
 			#[cfg(feature = "with-bitriel-runtime")]
 			Self::Bitriel(client) => client.storage_hash(id, key),
-			
 		}
 	}
 
@@ -295,7 +305,6 @@ impl sc_client_api::StorageProvider<Block, crate::FullBackend> for Client {
 			Self::Rieltest(client) => client.storage_pairs(id, key_prefix),
 			#[cfg(feature = "with-bitriel-runtime")]
 			Self::Bitriel(client) => client.storage_pairs(id, key_prefix),
-			
 		}
 	}
 
@@ -304,13 +313,14 @@ impl sc_client_api::StorageProvider<Block, crate::FullBackend> for Client {
 		id: &BlockId<Block>,
 		prefix: Option<&'a StorageKey>,
 		start_key: Option<&StorageKey>,
-	) -> sp_blockchain::Result<KeyIterator<'a, <crate::FullBackend as sc_client_api::Backend<Block>>::State, Block>> {
+	) -> sp_blockchain::Result<
+		KeyIterator<'a, <crate::FullBackend as sc_client_api::Backend<Block>>::State, Block>,
+	> {
 		match self {
 			#[cfg(feature = "with-rieltest-runtime")]
 			Self::Rieltest(client) => client.storage_keys_iter(id, prefix, start_key),
 			#[cfg(feature = "with-bitriel-runtime")]
 			Self::Bitriel(client) => client.storage_keys_iter(id, prefix, start_key),
-			
 		}
 	}
 
@@ -320,13 +330,14 @@ impl sc_client_api::StorageProvider<Block, crate::FullBackend> for Client {
 		child_info: ChildInfo,
 		prefix: Option<&'a StorageKey>,
 		start_key: Option<&StorageKey>,
-	) -> sp_blockchain::Result<KeyIterator<'a, <crate::FullBackend as sc_client_api::Backend<Block>>::State, Block>> {
+	) -> sp_blockchain::Result<
+		KeyIterator<'a, <crate::FullBackend as sc_client_api::Backend<Block>>::State, Block>,
+	> {
 		match self {
 			#[cfg(feature = "with-rieltest-runtime")]
 			Self::Rieltest(client) => client.child_storage_keys_iter(id, child_info, prefix, start_key),
 			#[cfg(feature = "with-bitriel-runtime")]
 			Self::Bitriel(client) => client.child_storage_keys_iter(id, child_info, prefix, start_key),
-			
 		}
 	}
 
@@ -341,7 +352,6 @@ impl sc_client_api::StorageProvider<Block, crate::FullBackend> for Client {
 			Self::Rieltest(client) => client.child_storage(id, child_info, key),
 			#[cfg(feature = "with-bitriel-runtime")]
 			Self::Bitriel(client) => client.child_storage(id, child_info, key),
-			
 		}
 	}
 
@@ -356,7 +366,6 @@ impl sc_client_api::StorageProvider<Block, crate::FullBackend> for Client {
 			Self::Rieltest(client) => client.child_storage_keys(id, child_info, key_prefix),
 			#[cfg(feature = "with-bitriel-runtime")]
 			Self::Bitriel(client) => client.child_storage_keys(id, child_info, key_prefix),
-			
 		}
 	}
 
@@ -371,7 +380,6 @@ impl sc_client_api::StorageProvider<Block, crate::FullBackend> for Client {
 			Self::Rieltest(client) => client.child_storage_hash(id, child_info, key),
 			#[cfg(feature = "with-bitriel-runtime")]
 			Self::Bitriel(client) => client.child_storage_hash(id, child_info, key),
-			
 		}
 	}
 }
@@ -383,7 +391,6 @@ impl sp_blockchain::HeaderBackend<Block> for Client {
 			Self::Rieltest(client) => client.header(&id),
 			#[cfg(feature = "with-bitriel-runtime")]
 			Self::Bitriel(client) => client.header(&id),
-			
 		}
 	}
 
@@ -393,7 +400,6 @@ impl sp_blockchain::HeaderBackend<Block> for Client {
 			Self::Rieltest(client) => client.info(),
 			#[cfg(feature = "with-bitriel-runtime")]
 			Self::Bitriel(client) => client.info(),
-			
 		}
 	}
 
@@ -403,7 +409,6 @@ impl sp_blockchain::HeaderBackend<Block> for Client {
 			Self::Rieltest(client) => client.status(id),
 			#[cfg(feature = "with-bitriel-runtime")]
 			Self::Bitriel(client) => client.status(id),
-			
 		}
 	}
 
@@ -413,7 +418,6 @@ impl sp_blockchain::HeaderBackend<Block> for Client {
 			Self::Rieltest(client) => client.number(hash),
 			#[cfg(feature = "with-bitriel-runtime")]
 			Self::Bitriel(client) => client.number(hash),
-			
 		}
 	}
 
@@ -423,7 +427,6 @@ impl sp_blockchain::HeaderBackend<Block> for Client {
 			Self::Rieltest(client) => client.hash(number),
 			#[cfg(feature = "with-bitriel-runtime")]
 			Self::Bitriel(client) => client.hash(number),
-			
 		}
 	}
 }

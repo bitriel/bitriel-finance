@@ -71,8 +71,8 @@ pub type SignedExtra = (
 	pallet_transaction_payment::ChargeTransactionPayment<Runtime>,
 );
 
-use runtime_common::{RuntimeBlockLength, RuntimeBlockWeights, MAXIMUM_BLOCK_WEIGHT};
 use constants::{currency::*, fee::WeightToFee, time::*};
+use runtime_common::{RuntimeBlockLength, RuntimeBlockWeights, MAXIMUM_BLOCK_WEIGHT};
 
 impl_opaque_keys! {
 	pub struct SessionKeys {

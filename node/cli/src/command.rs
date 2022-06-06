@@ -83,11 +83,16 @@ impl SubstrateCli for Cli {
 
 		Ok(match id {
 			#[cfg(feature = "with-rieltest-runtime")]
-			"rieltest" => Box::new(chain_spec::rieltest::rieltest_dev_config()?),
+			"rieltest" => Box::new(chain_spec::rieltest::rieltest_config()?),
 			#[cfg(feature = "with-rieltest-runtime")]
-			"rieltest-latest" => Box::new(chain_spec::rieltest::rieltest_config()?),
+			"rieltest-latest" => Box::new(chain_spec::rieltest::rieltest_dev_config()?),
+			#[cfg(feature = "with-rieltest-runtime")]
+			"rieltest-cardamom" => Box::new(chain_spec::rieltest::rieltest_staging_config()?),
+
 			#[cfg(feature = "with-bitriel-runtime")]
 			"bitriel" => Box::new(chain_spec::bitriel::bitriel_config()?),
+			#[cfg(feature = "with-bitriel-runtime")]
+			"bitriel-selendra" => Box::new(chain_spec::bitriel::bitriel_staging_config()?),
 			#[cfg(feature = "with-bitriel-runtime")]
 			"bitriel-dev" => Box::new(chain_spec::bitriel::bitriel_dev_config()?),
 			path => {
@@ -158,18 +163,11 @@ impl SubstrateCli for RelayChainCli {
 	}
 
 	fn copyright_start_year() -> i32 {
-		2019
+		2022
 	}
 
 	fn load_spec(&self, id: &str) -> std::result::Result<Box<dyn sc_service::ChainSpec>, String> {
-		if id == "cardamom-rieltest" {
-			let spec = sc_service::GenericChainSpec::<(), selendra_service::chain_spec::Extensions>::from_json_bytes(
-				&include_bytes!("../../resources/cardamom-rieltest.json")[..],
-			)?;
-			Ok(Box::new(spec))
-		} else {
-			selendra_cli::Cli::from_iter([RelayChainCli::executable_name()].iter()).load_spec(id)
-		}
+		selendra_cli::Cli::from_iter([RelayChainCli::executable_name()].iter()).load_spec(id)
 	}
 
 	fn native_runtime_version(chain_spec: &Box<dyn ChainSpec>) -> &'static RuntimeVersion {

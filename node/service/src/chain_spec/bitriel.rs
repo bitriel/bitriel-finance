@@ -40,7 +40,7 @@ pub fn bitriel_config() -> Result<ChainSpec, String> {
 fn bitriel_properties() -> Properties {
 	let mut properties = Map::new();
 	properties.insert("tokenSymbol".into(), 42.into());
-	properties.insert("tokenDecimals".into(), "SEL".into());
+	properties.insert("tokenDecimals".into(), "BTR".into());
 	properties.insert("ss58Format".into(), 12.into());
 	properties
 }
@@ -77,7 +77,46 @@ pub fn bitriel_dev_config() -> Result<ChainSpec, String> {
 		None,
 		Some(bitriel_properties()),
 		Extensions {
-			relay_chain: "cardamom-local".into(),
+			relay_chain: "selendra-local".into(),
+			para_id: PARA_ID,
+			bad_blocks: None,
+		},
+	))
+}
+
+pub fn bitriel_staging_config() -> Result<ChainSpec, String> {
+	let wasm_binary = bitriel_runtime::WASM_BINARY.unwrap_or_default();
+
+	Ok(ChainSpec::from_genesis(
+		"Bitriel Dev",
+		"bitriel-dev",
+		ChainType::Development,
+		move || {
+			bitriel_genesis(
+				wasm_binary,
+				// Initial PoA authorities
+				vec![get_parachain_authority_keys_from_seed("Alice")],
+				// Sudo account
+				get_account_id_from_seed::<sr25519::Public>("Alice"),
+				vec![
+					(get_account_id_from_seed::<sr25519::Public>("Alice"), 1000 * UNIT),
+					(get_account_id_from_seed::<sr25519::Public>("Bob"), 1000 * UNIT),
+					(
+						get_account_id_from_seed::<sr25519::Public>("Charlie"),
+						1000 * UNIT,
+					),
+				],
+				vec![],
+				vec![get_account_id_from_seed::<sr25519::Public>("Alice")],
+			)
+		},
+		vec![],
+		None,
+		None,
+		None,
+		Some(bitriel_properties()),
+		Extensions {
+			relay_chain: "selendra".into(),
 			para_id: PARA_ID,
 			bad_blocks: None,
 		},

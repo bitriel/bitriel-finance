@@ -3,10 +3,15 @@ members = [
     "primitives",
     "runtimes/common",
     "runtimes/bitriel",
-    "runtimes/rieltest"
+    "runtimes/rieltest",
+    "node/service",
+    "node/inspect",
+    "node/rpc",
+    "node/cli",
+
 ]
 
-cargo-features = ["resolver"]
+# cargo-features = ["resolver"]
 
 resolver = "2"
 

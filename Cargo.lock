@@ -364,6 +364,20 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d468802bab17cbc0cc575e9b053f41e72aa36bfa6b7f55e3529ffa43161b97fa"
 
 [[package]]
+name = "backoff"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b62ddb9cb1ec0a098ad4bbf9344d0713fa193ae1a80af55febcff2627b6a00c1"
+dependencies = [
+ "futures-core",
+ "getrandom 0.2.6",
+ "instant",
+ "pin-project-lite 0.2.9",
+ "rand 0.8.5",
+ "tokio",
+]
+
+[[package]]
 name = "backtrace"
 version = "0.3.65"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -392,9 +406,31 @@ checksum = "349a06037c7bf932dd7e7d1f653678b2038b9ad46a74102f1fc7bd7872678cce"
 
 [[package]]
 name = "base58"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5024ee8015f02155eee35c711107ddd9a9bf3cb689cf2a9089c97e79b6e1ae83"
+
+[[package]]
+name = "base58"
 version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6107fe1be6682a68940da878d9e9f5e90ca5745b3dec9fd1bb393c8777d4f581"
+
+[[package]]
+name = "base58check"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2ee2fe4c9a0c84515f136aaae2466744a721af6d63339c18689d9e995d74d99b"
+dependencies = [
+ "base58 0.1.0",
+ "sha2 0.8.2",
+]
+
+[[package]]
+name = "base64"
+version = "0.12.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3441f0f7b02788e948e47f457ca01f1d7e6d92c693bc132c22b087d3141c03ff"
 
 [[package]]
 name = "base64"
@@ -407,6 +443,12 @@ name = "base64ct"
 version = "1.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "dea908e7347a8c64e378c17e30ef880ad73e3b4498346b055c2c00ea342f3179"
+
+[[package]]
+name = "bech32"
+version = "0.7.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2dabbe35f96fb9507f7330793dc490461b2962659ac5d427181e451a623751d1"
 
 [[package]]
 name = "beef"
@@ -530,11 +572,45 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bef38d45163c2f1dde094a7dfd33ccf595c92905c8f8f4fdc18d06fb1037718a"
 
 [[package]]
-name = "bitriel-common"
+name = "bitriel-cli"
 version = "0.1.0"
 dependencies = [
- "frame-support",
- "frame-system",
+ "bitriel-inspect",
+ "bitriel-service",
+ "clap",
+ "cumulus-client-cli",
+ "cumulus-client-service",
+ "cumulus-primitives-core",
+ "frame-benchmarking-cli",
+ "log",
+ "orml-build-script-utils",
+ "parity-scale-codec",
+ "sc-cli",
+ "sc-service",
+ "sc-telemetry",
+ "sc-tracing",
+ "selendra-cli",
+ "selendra-parachain",
+ "selendra-primitives",
+ "selendra-service",
+ "sp-core",
+ "sp-runtime",
+ "try-runtime-cli",
+]
+
+[[package]]
+name = "bitriel-inspect"
+version = "0.1.0"
+dependencies = [
+ "clap",
+ "derive_more",
+ "log",
+ "parity-scale-codec",
+ "sc-cli",
+ "sc-client-api",
+ "sc-service",
+ "sp-blockchain",
+ "sp-core",
  "sp-runtime",
 ]
 
@@ -552,10 +628,30 @@ dependencies = [
 ]
 
 [[package]]
+name = "bitriel-rpc"
+version = "0.1.0"
+dependencies = [
+ "bitriel-primitives",
+ "jsonrpc-core",
+ "pallet-transaction-payment-rpc",
+ "parity-scale-codec",
+ "runtime-common",
+ "sc-client-api",
+ "sc-consensus-manual-seal",
+ "sc-rpc",
+ "sc-rpc-api",
+ "sc-transaction-pool-api",
+ "sp-api",
+ "sp-block-builder",
+ "sp-blockchain",
+ "sp-runtime",
+ "substrate-frame-rpc-system",
+]
+
+[[package]]
 name = "bitriel-runtime"
 version = "0.1.0"
 dependencies = [
- "bitriel-common",
  "bitriel-primitives",
  "cumulus-pallet-aura-ext",
  "cumulus-pallet-dmp-queue",
@@ -587,6 +683,7 @@ dependencies = [
  "pallet-xcm",
  "parachain-info",
  "parity-scale-codec",
+ "runtime-common",
  "scale-info",
  "selendra-parachain",
  "selendra-runtime-common",
@@ -611,13 +708,102 @@ dependencies = [
 ]
 
 [[package]]
+name = "bitriel-service"
+version = "0.1.0"
+dependencies = [
+ "async-trait",
+ "bitriel-primitives",
+ "bitriel-rpc",
+ "bitriel-runtime",
+ "coins-bip32",
+ "coins-bip39",
+ "cumulus-client-cli",
+ "cumulus-client-consensus-aura",
+ "cumulus-client-consensus-common",
+ "cumulus-client-consensus-relay-chain",
+ "cumulus-client-network",
+ "cumulus-client-service",
+ "cumulus-pallet-parachain-system",
+ "cumulus-primitives-core",
+ "cumulus-primitives-parachain-inherent",
+ "cumulus-relay-chain-inprocess-interface",
+ "cumulus-relay-chain-interface",
+ "cumulus-relay-chain-rpc-interface",
+ "cumulus-test-relay-sproof-builder",
+ "elliptic-curve",
+ "frame-benchmarking",
+ "frame-system-rpc-runtime-api",
+ "futures 0.3.21",
+ "hex",
+ "hex-literal",
+ "jsonrpc-core",
+ "k256",
+ "log",
+ "pallet-transaction-payment-rpc-runtime-api",
+ "parity-scale-codec",
+ "rieltest-runtime",
+ "runtime-common",
+ "sc-basic-authorship",
+ "sc-chain-spec",
+ "sc-cli",
+ "sc-client-api",
+ "sc-consensus",
+ "sc-consensus-aura",
+ "sc-consensus-manual-seal",
+ "sc-consensus-slots",
+ "sc-executor",
+ "sc-finality-grandpa",
+ "sc-network",
+ "sc-offchain",
+ "sc-rpc",
+ "sc-service",
+ "sc-telemetry",
+ "sc-tracing",
+ "sc-transaction-pool",
+ "selendra-primitives",
+ "selendra-service",
+ "serde",
+ "serde_json",
+ "sp-api",
+ "sp-block-builder",
+ "sp-blockchain",
+ "sp-consensus",
+ "sp-consensus-aura",
+ "sp-core",
+ "sp-finality-grandpa",
+ "sp-inherents",
+ "sp-io",
+ "sp-keystore",
+ "sp-offchain",
+ "sp-runtime",
+ "sp-session",
+ "sp-std",
+ "sp-storage",
+ "sp-timestamp",
+ "sp-transaction-pool",
+ "sp-trie",
+ "substrate-prometheus-endpoint",
+ "tiny-keccak",
+]
+
+[[package]]
+name = "bitvec"
+version = "0.17.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "41262f11d771fd4a61aa3ce019fca363b4b6c282fca9da2a31186d3965a47a5c"
+dependencies = [
+ "either",
+ "radium 0.3.0",
+]
+
+[[package]]
 name = "bitvec"
 version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1489fcb93a5bb47da0462ca93ad252ad6af2145cce58d10d46a83931ba9f016b"
 dependencies = [
  "funty",
- "radium",
+ "radium 0.7.0",
  "tap",
  "wyz",
 ]
@@ -863,6 +1049,106 @@ dependencies = [
 ]
 
 [[package]]
+name = "cardamom-runtime"
+version = "0.2.3"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
+dependencies = [
+ "beefy-primitives",
+ "bitvec 1.0.0",
+ "cardamom-runtime-constants",
+ "frame-benchmarking",
+ "frame-election-provider-support",
+ "frame-executive",
+ "frame-support",
+ "frame-system",
+ "frame-system-benchmarking",
+ "frame-system-rpc-runtime-api",
+ "frame-try-runtime",
+ "hex-literal",
+ "log",
+ "pallet-authority-discovery",
+ "pallet-authorship",
+ "pallet-babe",
+ "pallet-bags-list",
+ "pallet-balances",
+ "pallet-bounties",
+ "pallet-collective",
+ "pallet-democracy",
+ "pallet-election-provider-multi-phase",
+ "pallet-elections-phragmen",
+ "pallet-grandpa",
+ "pallet-identity",
+ "pallet-im-online",
+ "pallet-indices",
+ "pallet-membership",
+ "pallet-mmr-primitives",
+ "pallet-multisig",
+ "pallet-nicks",
+ "pallet-offences",
+ "pallet-offences-benchmarking",
+ "pallet-preimage",
+ "pallet-proxy",
+ "pallet-recovery",
+ "pallet-scheduler",
+ "pallet-session",
+ "pallet-session-benchmarking",
+ "pallet-staking",
+ "pallet-staking-reward-curve",
+ "pallet-staking-reward-fn",
+ "pallet-sudo",
+ "pallet-timestamp",
+ "pallet-tips",
+ "pallet-transaction-payment",
+ "pallet-transaction-payment-rpc-runtime-api",
+ "pallet-treasury",
+ "pallet-utility",
+ "pallet-vesting",
+ "pallet-xcm",
+ "parity-scale-codec",
+ "rustc-hex",
+ "scale-info",
+ "selendra-primitives",
+ "selendra-runtime-common",
+ "selendra-runtime-parachains",
+ "serde",
+ "serde_derive",
+ "smallvec",
+ "sp-api",
+ "sp-arithmetic",
+ "sp-authority-discovery",
+ "sp-block-builder",
+ "sp-consensus-babe",
+ "sp-core",
+ "sp-inherents",
+ "sp-io",
+ "sp-npos-elections",
+ "sp-offchain",
+ "sp-runtime",
+ "sp-session",
+ "sp-staking",
+ "sp-std",
+ "sp-transaction-pool",
+ "sp-version",
+ "static_assertions",
+ "substrate-wasm-builder",
+ "xcm",
+ "xcm-builder",
+ "xcm-executor",
+]
+
+[[package]]
+name = "cardamom-runtime-constants"
+version = "0.2.3"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
+dependencies = [
+ "frame-support",
+ "selendra-primitives",
+ "selendra-runtime-common",
+ "smallvec",
+ "sp-runtime",
+]
+
+[[package]]
 name = "cargo-platform"
 version = "0.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1035,6 +1321,63 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a37c35f1112dad5e6e0b1adaff798507497a18fceeb30cceb3bae7d1427b9213"
 dependencies = [
  "os_str_bytes",
+]
+
+[[package]]
+name = "coins-bip32"
+version = "0.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "471b39eadc9323de375dce5eff149a5a1ebd21c67f1da34a56f87ee62191d4ea"
+dependencies = [
+ "bincode",
+ "bs58",
+ "coins-core",
+ "digest 0.9.0",
+ "getrandom 0.2.6",
+ "hmac 0.11.0",
+ "k256",
+ "lazy_static",
+ "serde",
+ "sha2 0.9.9",
+ "thiserror",
+]
+
+[[package]]
+name = "coins-bip39"
+version = "0.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8f473ea37dfc9d2cb94fdde50c3d41f28c3f384b367573d66386fea38d76d466"
+dependencies = [
+ "bitvec 0.17.4",
+ "coins-bip32",
+ "getrandom 0.2.6",
+ "hex",
+ "hmac 0.11.0",
+ "pbkdf2 0.8.0",
+ "rand 0.8.5",
+ "sha2 0.9.9",
+ "thiserror",
+]
+
+[[package]]
+name = "coins-core"
+version = "0.2.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d257d975731955ee86fa7f348000c3fea09c262e84c70c11e994a85aa4f467a7"
+dependencies = [
+ "base58check",
+ "base64 0.12.3",
+ "bech32",
+ "blake2 0.9.2",
+ "digest 0.9.0",
+ "generic-array 0.14.5",
+ "hex",
+ "ripemd160",
+ "serde",
+ "serde_derive",
+ "sha2 0.9.9",
+ "sha3 0.9.1",
+ "thiserror",
 ]
 
 [[package]]
@@ -1304,7 +1647,7 @@ version = "0.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c1a816186fa68d9e426e3cb4ae4dff1fcd8e4a2c34b781bf7a822574a0d0aac8"
 dependencies = [
- "sct",
+ "sct 0.6.1",
 ]
 
 [[package]]
@@ -1338,9 +1681,197 @@ dependencies = [
 ]
 
 [[package]]
+name = "cumulus-client-cli"
+version = "0.1.0"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
+dependencies = [
+ "clap",
+ "sc-cli",
+ "sc-service",
+ "url 2.2.2",
+]
+
+[[package]]
+name = "cumulus-client-collator"
+version = "0.1.0"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
+dependencies = [
+ "cumulus-client-consensus-common",
+ "cumulus-client-network",
+ "cumulus-primitives-core",
+ "cumulus-relay-chain-interface",
+ "futures 0.3.21",
+ "parity-scale-codec",
+ "parking_lot 0.12.0",
+ "sc-client-api",
+ "selendra-node-primitives",
+ "selendra-node-subsystem",
+ "selendra-overseer",
+ "selendra-primitives",
+ "sp-api",
+ "sp-consensus",
+ "sp-core",
+ "sp-runtime",
+ "tracing",
+]
+
+[[package]]
+name = "cumulus-client-consensus-aura"
+version = "0.1.0"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
+dependencies = [
+ "async-trait",
+ "cumulus-client-consensus-common",
+ "cumulus-primitives-core",
+ "futures 0.3.21",
+ "parity-scale-codec",
+ "sc-client-api",
+ "sc-consensus",
+ "sc-consensus-aura",
+ "sc-consensus-slots",
+ "sc-telemetry",
+ "sp-api",
+ "sp-application-crypto",
+ "sp-block-builder",
+ "sp-blockchain",
+ "sp-consensus",
+ "sp-consensus-aura",
+ "sp-core",
+ "sp-inherents",
+ "sp-keystore",
+ "sp-runtime",
+ "substrate-prometheus-endpoint",
+ "tracing",
+]
+
+[[package]]
+name = "cumulus-client-consensus-common"
+version = "0.1.0"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
+dependencies = [
+ "async-trait",
+ "cumulus-relay-chain-interface",
+ "dyn-clone",
+ "futures 0.3.21",
+ "parity-scale-codec",
+ "sc-client-api",
+ "sc-consensus",
+ "selendra-primitives",
+ "sp-api",
+ "sp-blockchain",
+ "sp-consensus",
+ "sp-runtime",
+ "sp-trie",
+ "tracing",
+]
+
+[[package]]
+name = "cumulus-client-consensus-relay-chain"
+version = "0.1.0"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
+dependencies = [
+ "async-trait",
+ "cumulus-client-consensus-common",
+ "cumulus-primitives-core",
+ "cumulus-relay-chain-interface",
+ "futures 0.3.21",
+ "parking_lot 0.12.0",
+ "sc-client-api",
+ "sc-consensus",
+ "sp-api",
+ "sp-block-builder",
+ "sp-blockchain",
+ "sp-consensus",
+ "sp-core",
+ "sp-inherents",
+ "sp-runtime",
+ "substrate-prometheus-endpoint",
+ "tracing",
+]
+
+[[package]]
+name = "cumulus-client-network"
+version = "0.1.0"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
+dependencies = [
+ "async-trait",
+ "cumulus-relay-chain-interface",
+ "derive_more",
+ "futures 0.3.21",
+ "futures-timer",
+ "parity-scale-codec",
+ "parking_lot 0.12.0",
+ "sc-client-api",
+ "selendra-node-primitives",
+ "selendra-parachain",
+ "selendra-primitives",
+ "sp-api",
+ "sp-blockchain",
+ "sp-consensus",
+ "sp-core",
+ "sp-runtime",
+ "sp-state-machine",
+ "tracing",
+]
+
+[[package]]
+name = "cumulus-client-pov-recovery"
+version = "0.1.0"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
+dependencies = [
+ "cumulus-primitives-core",
+ "cumulus-relay-chain-interface",
+ "futures 0.3.21",
+ "futures-timer",
+ "parity-scale-codec",
+ "rand 0.8.5",
+ "sc-client-api",
+ "sc-consensus",
+ "selendra-node-primitives",
+ "selendra-node-subsystem",
+ "selendra-overseer",
+ "selendra-primitives",
+ "sp-api",
+ "sp-consensus",
+ "sp-maybe-compressed-blob",
+ "sp-runtime",
+ "tracing",
+]
+
+[[package]]
+name = "cumulus-client-service"
+version = "0.1.0"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
+dependencies = [
+ "cumulus-client-cli",
+ "cumulus-client-collator",
+ "cumulus-client-consensus-common",
+ "cumulus-client-pov-recovery",
+ "cumulus-primitives-core",
+ "cumulus-relay-chain-interface",
+ "parity-scale-codec",
+ "parking_lot 0.12.0",
+ "sc-chain-spec",
+ "sc-client-api",
+ "sc-consensus",
+ "sc-consensus-babe",
+ "sc-service",
+ "sc-telemetry",
+ "sc-tracing",
+ "selendra-overseer",
+ "selendra-primitives",
+ "sp-api",
+ "sp-blockchain",
+ "sp-consensus",
+ "sp-core",
+ "sp-runtime",
+ "tracing",
+]
+
+[[package]]
 name = "cumulus-pallet-aura-ext"
 version = "0.1.0"
-source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#9a0953521ba66f20cdccfaf0817f2e58b4505ae1"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
 dependencies = [
  "frame-executive",
  "frame-support",
@@ -1358,7 +1889,7 @@ dependencies = [
 [[package]]
 name = "cumulus-pallet-dmp-queue"
 version = "0.1.0"
-source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#9a0953521ba66f20cdccfaf0817f2e58b4505ae1"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
 dependencies = [
  "cumulus-primitives-core",
  "frame-support",
@@ -1376,7 +1907,7 @@ dependencies = [
 [[package]]
 name = "cumulus-pallet-parachain-system"
 version = "0.1.0"
-source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#9a0953521ba66f20cdccfaf0817f2e58b4505ae1"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
 dependencies = [
  "cumulus-pallet-parachain-system-proc-macro",
  "cumulus-primitives-core",
@@ -1406,7 +1937,7 @@ dependencies = [
 [[package]]
 name = "cumulus-pallet-parachain-system-proc-macro"
 version = "0.1.0"
-source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#9a0953521ba66f20cdccfaf0817f2e58b4505ae1"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
 dependencies = [
  "proc-macro-crate 1.1.3",
  "proc-macro2",
@@ -1417,7 +1948,7 @@ dependencies = [
 [[package]]
 name = "cumulus-pallet-session-benchmarking"
 version = "3.0.0"
-source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#9a0953521ba66f20cdccfaf0817f2e58b4505ae1"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
 dependencies = [
  "frame-benchmarking",
  "frame-support",
@@ -1431,7 +1962,7 @@ dependencies = [
 [[package]]
 name = "cumulus-pallet-xcm"
 version = "0.1.0"
-source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#9a0953521ba66f20cdccfaf0817f2e58b4505ae1"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
 dependencies = [
  "cumulus-primitives-core",
  "frame-support",
@@ -1448,7 +1979,7 @@ dependencies = [
 [[package]]
 name = "cumulus-pallet-xcmp-queue"
 version = "0.1.0"
-source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#9a0953521ba66f20cdccfaf0817f2e58b4505ae1"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
 dependencies = [
  "cumulus-primitives-core",
  "frame-benchmarking",
@@ -1467,7 +1998,7 @@ dependencies = [
 [[package]]
 name = "cumulus-primitives-core"
 version = "0.1.0"
-source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#9a0953521ba66f20cdccfaf0817f2e58b4505ae1"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
 dependencies = [
  "frame-support",
  "parity-scale-codec",
@@ -1483,7 +2014,7 @@ dependencies = [
 [[package]]
 name = "cumulus-primitives-parachain-inherent"
 version = "0.1.0"
-source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#9a0953521ba66f20cdccfaf0817f2e58b4505ae1"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
 dependencies = [
  "async-trait",
  "cumulus-primitives-core",
@@ -1506,7 +2037,7 @@ dependencies = [
 [[package]]
 name = "cumulus-primitives-timestamp"
 version = "0.1.0"
-source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#9a0953521ba66f20cdccfaf0817f2e58b4505ae1"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
 dependencies = [
  "cumulus-primitives-core",
  "futures 0.3.21",
@@ -1519,7 +2050,7 @@ dependencies = [
 [[package]]
 name = "cumulus-primitives-utility"
 version = "0.1.0"
-source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#9a0953521ba66f20cdccfaf0817f2e58b4505ae1"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
 dependencies = [
  "cumulus-primitives-core",
  "frame-support",
@@ -1534,15 +2065,43 @@ dependencies = [
 ]
 
 [[package]]
+name = "cumulus-relay-chain-inprocess-interface"
+version = "0.1.0"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
+dependencies = [
+ "async-trait",
+ "cumulus-primitives-core",
+ "cumulus-relay-chain-interface",
+ "futures 0.3.21",
+ "futures-timer",
+ "parking_lot 0.12.0",
+ "sc-client-api",
+ "sc-consensus-babe",
+ "sc-network",
+ "sc-service",
+ "sc-telemetry",
+ "sc-tracing",
+ "selendra-client",
+ "selendra-service",
+ "sp-api",
+ "sp-blockchain",
+ "sp-consensus",
+ "sp-core",
+ "sp-runtime",
+ "sp-state-machine",
+ "tracing",
+]
+
+[[package]]
 name = "cumulus-relay-chain-interface"
 version = "0.1.0"
-source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#9a0953521ba66f20cdccfaf0817f2e58b4505ae1"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
 dependencies = [
  "async-trait",
  "cumulus-primitives-core",
  "derive_more",
  "futures 0.3.21",
- "jsonrpsee-core",
+ "jsonrpsee-core 0.9.0",
  "parity-scale-codec",
  "parking_lot 0.12.0",
  "sc-client-api",
@@ -1558,9 +2117,35 @@ dependencies = [
 ]
 
 [[package]]
+name = "cumulus-relay-chain-rpc-interface"
+version = "0.1.0"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
+dependencies = [
+ "async-trait",
+ "backoff",
+ "cumulus-primitives-core",
+ "cumulus-relay-chain-interface",
+ "futures 0.3.21",
+ "futures-timer",
+ "jsonrpsee 0.9.0",
+ "parity-scale-codec",
+ "parking_lot 0.12.0",
+ "sc-client-api",
+ "sc-rpc-api",
+ "selendra-service",
+ "sp-api",
+ "sp-core",
+ "sp-runtime",
+ "sp-state-machine",
+ "sp-storage",
+ "tracing",
+ "url 2.2.2",
+]
+
+[[package]]
 name = "cumulus-test-relay-sproof-builder"
 version = "0.1.0"
-source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#9a0953521ba66f20cdccfaf0817f2e58b4505ae1"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
 dependencies = [
  "cumulus-primitives-core",
  "parity-scale-codec",
@@ -1782,6 +2367,7 @@ checksum = "d0d69ae62e0ce582d56380743515fefaf1a8c70cec685d9677636d7e30ae9dc9"
 dependencies = [
  "der",
  "elliptic-curve",
+ "rfc6979",
  "signature",
 ]
 
@@ -2121,6 +2707,47 @@ dependencies = [
 ]
 
 [[package]]
+name = "frame-benchmarking-cli"
+version = "4.0.0-dev"
+source = "git+https://github.com/paritytech/substrate?branch=polkadot-v0.9.18#fc3fd073d3a0acf9933c3994b660ebd7b5833f65"
+dependencies = [
+ "Inflector",
+ "chrono",
+ "clap",
+ "frame-benchmarking",
+ "frame-support",
+ "handlebars",
+ "hash-db",
+ "hex",
+ "itertools",
+ "kvdb",
+ "linked-hash-map",
+ "log",
+ "memory-db",
+ "parity-scale-codec",
+ "rand 0.8.5",
+ "sc-cli",
+ "sc-client-api",
+ "sc-client-db",
+ "sc-executor",
+ "sc-service",
+ "serde",
+ "serde_json",
+ "serde_nanos",
+ "sp-api",
+ "sp-blockchain",
+ "sp-core",
+ "sp-database",
+ "sp-externalities",
+ "sp-keystore",
+ "sp-runtime",
+ "sp-state-machine",
+ "sp-std",
+ "sp-storage",
+ "sp-trie",
+]
+
+[[package]]
 name = "frame-election-provider-support"
 version = "4.0.0-dev"
 source = "git+https://github.com/paritytech/substrate?branch=polkadot-v0.9.18#fc3fd073d3a0acf9933c3994b660ebd7b5833f65"
@@ -2421,8 +3048,8 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3a1387e07917c711fb4ee4f48ea0adb04a3c9739e53ef85bf43ae1edc2937a8b"
 dependencies = [
  "futures-io",
- "rustls",
- "webpki",
+ "rustls 0.19.1",
+ "webpki 0.21.4",
 ]
 
 [[package]]
@@ -2501,8 +3128,10 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9be70c98951c83b8d2f8f60d7065fa6d5146873094452a1008da8c2f1e4205ad"
 dependencies = [
  "cfg-if 1.0.0",
+ "js-sys",
  "libc",
  "wasi 0.10.0+wasi-snapshot-preview1",
+ "wasm-bindgen",
 ]
 
 [[package]]
@@ -2585,6 +3214,20 @@ dependencies = [
  "tokio",
  "tokio-util 0.7.3",
  "tracing",
+]
+
+[[package]]
+name = "handlebars"
+version = "4.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d113a9853e5accd30f43003560b5563ffbb007e3f325e8b103fa0d0029c6e6df"
+dependencies = [
+ "log",
+ "pest",
+ "pest_derive",
+ "serde",
+ "serde_json",
+ "thiserror",
 ]
 
 [[package]]
@@ -2778,11 +3421,27 @@ dependencies = [
  "futures-util",
  "hyper",
  "log",
- "rustls",
- "rustls-native-certs",
+ "rustls 0.19.1",
+ "rustls-native-certs 0.5.0",
  "tokio",
- "tokio-rustls",
- "webpki",
+ "tokio-rustls 0.22.0",
+ "webpki 0.21.4",
+]
+
+[[package]]
+name = "hyper-rustls"
+version = "0.23.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d87c48c02e0dc5e3b849a2041db3029fd066650f8f717c07bf8ed78ccb895cac"
+dependencies = [
+ "http",
+ "hyper",
+ "log",
+ "rustls 0.20.6",
+ "rustls-native-certs 0.6.2",
+ "tokio",
+ "tokio-rustls 0.23.4",
+ "webpki-roots 0.22.3",
 ]
 
 [[package]]
@@ -3122,6 +3781,106 @@ dependencies = [
 ]
 
 [[package]]
+name = "jsonrpsee"
+version = "0.4.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6373a33d987866ccfe1af4bc11b089dce941764313f9fd8b7cf13fcb51b72dc5"
+dependencies = [
+ "jsonrpsee-types 0.4.1",
+ "jsonrpsee-utils",
+ "jsonrpsee-ws-client 0.4.1",
+]
+
+[[package]]
+name = "jsonrpsee"
+version = "0.8.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "05fd8cd6c6b1bbd06881d2cf88f1fc83cc36c98f2219090f839115fb4a956cb9"
+dependencies = [
+ "jsonrpsee-core 0.8.0",
+ "jsonrpsee-proc-macros",
+ "jsonrpsee-types 0.8.0",
+ "jsonrpsee-ws-client 0.8.0",
+]
+
+[[package]]
+name = "jsonrpsee"
+version = "0.9.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f0d0b8cc1959f8c05256ace093b2317482da9127f1d9227564f47e7e6bf9bda8"
+dependencies = [
+ "jsonrpsee-core 0.9.0",
+ "jsonrpsee-http-client",
+ "jsonrpsee-types 0.9.0",
+ "jsonrpsee-ws-client 0.9.0",
+]
+
+[[package]]
+name = "jsonrpsee-client-transport"
+version = "0.8.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3303cdf246e6ab76e2866fb3d9acb6c76a068b1b28bd923a1b7a8122257ad7b5"
+dependencies = [
+ "futures 0.3.21",
+ "http",
+ "jsonrpsee-core 0.8.0",
+ "jsonrpsee-types 0.8.0",
+ "pin-project 1.0.10",
+ "rustls-native-certs 0.6.2",
+ "soketto",
+ "thiserror",
+ "tokio",
+ "tokio-rustls 0.23.4",
+ "tokio-util 0.6.10",
+ "tracing",
+ "webpki-roots 0.22.3",
+]
+
+[[package]]
+name = "jsonrpsee-client-transport"
+version = "0.9.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fa370c2c717d798c3c0a315ae3f0a707a388c6963c11f9da7dbbe1d3f7392f5f"
+dependencies = [
+ "futures 0.3.21",
+ "http",
+ "jsonrpsee-core 0.9.0",
+ "jsonrpsee-types 0.9.0",
+ "pin-project 1.0.10",
+ "rustls-native-certs 0.6.2",
+ "soketto",
+ "thiserror",
+ "tokio",
+ "tokio-rustls 0.23.4",
+ "tokio-util 0.6.10",
+ "tracing",
+ "webpki-roots 0.22.3",
+]
+
+[[package]]
+name = "jsonrpsee-core"
+version = "0.8.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f220b5a238dc7992b90f1144fbf6eaa585872c9376afe6fe6863ffead6191bf3"
+dependencies = [
+ "anyhow",
+ "arrayvec 0.7.2",
+ "async-trait",
+ "beef",
+ "futures-channel",
+ "futures-util",
+ "hyper",
+ "jsonrpsee-types 0.8.0",
+ "rustc-hash",
+ "serde",
+ "serde_json",
+ "soketto",
+ "thiserror",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
 name = "jsonrpsee-core"
 version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3132,12 +3891,80 @@ dependencies = [
  "async-trait",
  "beef",
  "futures-channel",
+ "futures-util",
  "hyper",
- "jsonrpsee-types",
+ "jsonrpsee-types 0.9.0",
+ "rustc-hash",
  "serde",
  "serde_json",
  "soketto",
  "thiserror",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
+name = "jsonrpsee-http-client"
+version = "0.9.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d31b837273d09dd80051eefa57d337769dff6c3266108c43a3544ac7ffed9d68"
+dependencies = [
+ "async-trait",
+ "hyper",
+ "hyper-rustls 0.23.0",
+ "jsonrpsee-core 0.9.0",
+ "jsonrpsee-types 0.9.0",
+ "rustc-hash",
+ "serde",
+ "serde_json",
+ "thiserror",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
+name = "jsonrpsee-proc-macros"
+version = "0.8.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4299ebf790ea9de1cb72e73ff2ae44c723ef264299e5e2d5ef46a371eb3ac3d8"
+dependencies = [
+ "proc-macro-crate 1.1.3",
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
+name = "jsonrpsee-types"
+version = "0.4.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "62f778cf245158fbd8f5d50823a2e9e4c708a40be164766bd35e9fb1d86715b2"
+dependencies = [
+ "anyhow",
+ "async-trait",
+ "beef",
+ "futures-channel",
+ "futures-util",
+ "hyper",
+ "log",
+ "serde",
+ "serde_json",
+ "soketto",
+ "thiserror",
+]
+
+[[package]]
+name = "jsonrpsee-types"
+version = "0.8.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c1b3f601bbbe45cd63f5407b6f7d7950e08a7d4f82aa699ff41a4a5e9e54df58"
+dependencies = [
+ "anyhow",
+ "beef",
+ "serde",
+ "serde_json",
+ "thiserror",
+ "tracing",
 ]
 
 [[package]]
@@ -3155,6 +3982,63 @@ dependencies = [
 ]
 
 [[package]]
+name = "jsonrpsee-utils"
+version = "0.4.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0109c4f972058f3b1925b73a17210aff7b63b65967264d0045d15ee88fe84f0c"
+dependencies = [
+ "arrayvec 0.7.2",
+ "beef",
+ "jsonrpsee-types 0.4.1",
+]
+
+[[package]]
+name = "jsonrpsee-ws-client"
+version = "0.4.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "559aa56fc402af206c00fc913dc2be1d9d788dcde045d14df141a535245d35ef"
+dependencies = [
+ "arrayvec 0.7.2",
+ "async-trait",
+ "fnv",
+ "futures 0.3.21",
+ "http",
+ "jsonrpsee-types 0.4.1",
+ "log",
+ "pin-project 1.0.10",
+ "rustls-native-certs 0.5.0",
+ "serde",
+ "serde_json",
+ "soketto",
+ "thiserror",
+ "tokio",
+ "tokio-rustls 0.22.0",
+ "tokio-util 0.6.10",
+]
+
+[[package]]
+name = "jsonrpsee-ws-client"
+version = "0.8.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "aff425cee7c779e33920913bc695447416078ee6d119f443f3060feffa4e86b5"
+dependencies = [
+ "jsonrpsee-client-transport 0.8.0",
+ "jsonrpsee-core 0.8.0",
+ "jsonrpsee-types 0.8.0",
+]
+
+[[package]]
+name = "jsonrpsee-ws-client"
+version = "0.9.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "31b58983485b2b626c276f1eb367d62dae82132451b281072a7bfa536a33ddf3"
+dependencies = [
+ "jsonrpsee-client-transport 0.9.0",
+ "jsonrpsee-core 0.9.0",
+ "jsonrpsee-types 0.9.0",
+]
+
+[[package]]
 name = "k256"
 version = "0.10.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3164,6 +4048,8 @@ dependencies = [
  "ecdsa",
  "elliptic-curve",
  "sec1",
+ "sha2 0.9.9",
+ "sha3 0.9.1",
 ]
 
 [[package]]
@@ -3400,7 +4286,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "dfeead619eb5dac46e65acc78c535a60aaec803d1428cca6407c3a4fc74d698d"
 dependencies = [
  "asynchronous-codec 0.6.0",
- "base64",
+ "base64 0.13.0",
  "byteorder",
  "bytes 1.1.0",
  "fnv",
@@ -3731,7 +4617,7 @@ dependencies = [
  "rw-stream-sink",
  "soketto",
  "url 2.2.2",
- "webpki-roots",
+ "webpki-roots 0.21.1",
 ]
 
 [[package]]
@@ -3769,7 +4655,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b0452aac8bab02242429380e9b2f94ea20cea2b37e2c1777a1358799bbe97f37"
 dependencies = [
  "arrayref",
- "base64",
+ "base64 0.13.0",
  "digest 0.9.0",
  "hmac-drbg",
  "libsecp256k1-core",
@@ -3929,6 +4815,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "maplit"
+version = "1.0.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3e2e65a1a2e43cfcb47a895c4c8b10d1f4a61097f9f254f183aee60cad9c651d"
+
+[[package]]
 name = "match_cfg"
 version = "0.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4032,7 +4924,7 @@ dependencies = [
 [[package]]
 name = "metered-channel"
 version = "0.2.3"
-source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#9a0953521ba66f20cdccfaf0817f2e58b4505ae1"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
 dependencies = [
  "derive_more",
  "futures 0.3.21",
@@ -4452,6 +5344,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "orml-build-script-utils"
+version = "0.4.1-dev"
+dependencies = [
+ "platforms 1.1.0",
+]
+
+[[package]]
 name = "os_str_bytes"
 version = "6.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4542,14 +5441,19 @@ name = "pallet-bags-list"
 version = "4.0.0-dev"
 source = "git+https://github.com/paritytech/substrate?branch=polkadot-v0.9.18#fc3fd073d3a0acf9933c3994b660ebd7b5833f65"
 dependencies = [
+ "frame-benchmarking",
  "frame-election-provider-support",
  "frame-support",
  "frame-system",
  "log",
+ "pallet-balances",
  "parity-scale-codec",
  "scale-info",
+ "sp-core",
+ "sp-io",
  "sp-runtime",
  "sp-std",
+ "sp-tracing",
 ]
 
 [[package]]
@@ -4613,6 +5517,7 @@ name = "pallet-bounties"
 version = "4.0.0-dev"
 source = "git+https://github.com/paritytech/substrate?branch=polkadot-v0.9.18#fc3fd073d3a0acf9933c3994b660ebd7b5833f65"
 dependencies = [
+ "frame-benchmarking",
  "frame-support",
  "frame-system",
  "log",
@@ -4628,7 +5533,7 @@ dependencies = [
 [[package]]
 name = "pallet-collator-selection"
 version = "3.0.0"
-source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#9a0953521ba66f20cdccfaf0817f2e58b4505ae1"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
 dependencies = [
  "frame-benchmarking",
  "frame-support",
@@ -4706,6 +5611,7 @@ name = "pallet-elections-phragmen"
 version = "5.0.0-dev"
 source = "git+https://github.com/paritytech/substrate?branch=polkadot-v0.9.18#fc3fd073d3a0acf9933c3994b660ebd7b5833f65"
 dependencies = [
+ "frame-benchmarking",
  "frame-support",
  "frame-system",
  "log",
@@ -4762,6 +5668,7 @@ name = "pallet-im-online"
 version = "4.0.0-dev"
 source = "git+https://github.com/paritytech/substrate?branch=polkadot-v0.9.18#fc3fd073d3a0acf9933c3994b660ebd7b5833f65"
 dependencies = [
+ "frame-benchmarking",
  "frame-support",
  "frame-system",
  "log",
@@ -4781,6 +5688,7 @@ name = "pallet-indices"
 version = "4.0.0-dev"
 source = "git+https://github.com/paritytech/substrate?branch=polkadot-v0.9.18#fc3fd073d3a0acf9933c3994b660ebd7b5833f65"
 dependencies = [
+ "frame-benchmarking",
  "frame-support",
  "frame-system",
  "parity-scale-codec",
@@ -4865,6 +5773,7 @@ name = "pallet-multisig"
 version = "4.0.0-dev"
 source = "git+https://github.com/paritytech/substrate?branch=polkadot-v0.9.18#fc3fd073d3a0acf9933c3994b660ebd7b5833f65"
 dependencies = [
+ "frame-benchmarking",
  "frame-support",
  "frame-system",
  "parity-scale-codec",
@@ -4906,6 +5815,29 @@ dependencies = [
 ]
 
 [[package]]
+name = "pallet-offences-benchmarking"
+version = "4.0.0-dev"
+source = "git+https://github.com/paritytech/substrate?branch=polkadot-v0.9.18#fc3fd073d3a0acf9933c3994b660ebd7b5833f65"
+dependencies = [
+ "frame-benchmarking",
+ "frame-election-provider-support",
+ "frame-support",
+ "frame-system",
+ "pallet-babe",
+ "pallet-balances",
+ "pallet-grandpa",
+ "pallet-im-online",
+ "pallet-offences",
+ "pallet-session",
+ "pallet-staking",
+ "parity-scale-codec",
+ "scale-info",
+ "sp-runtime",
+ "sp-staking",
+ "sp-std",
+]
+
+[[package]]
 name = "pallet-preimage"
 version = "4.0.0-dev"
 source = "git+https://github.com/paritytech/substrate?branch=polkadot-v0.9.18#fc3fd073d3a0acf9933c3994b660ebd7b5833f65"
@@ -4926,6 +5858,7 @@ name = "pallet-proxy"
 version = "4.0.0-dev"
 source = "git+https://github.com/paritytech/substrate?branch=polkadot-v0.9.18#fc3fd073d3a0acf9933c3994b660ebd7b5833f65"
 dependencies = [
+ "frame-benchmarking",
  "frame-support",
  "frame-system",
  "parity-scale-codec",
@@ -4987,10 +5920,27 @@ dependencies = [
 ]
 
 [[package]]
+name = "pallet-session-benchmarking"
+version = "4.0.0-dev"
+source = "git+https://github.com/paritytech/substrate?branch=polkadot-v0.9.18#fc3fd073d3a0acf9933c3994b660ebd7b5833f65"
+dependencies = [
+ "frame-benchmarking",
+ "frame-support",
+ "frame-system",
+ "pallet-session",
+ "pallet-staking",
+ "rand 0.7.3",
+ "sp-runtime",
+ "sp-session",
+ "sp-std",
+]
+
+[[package]]
 name = "pallet-staking"
 version = "4.0.0-dev"
 source = "git+https://github.com/paritytech/substrate?branch=polkadot-v0.9.18#fc3fd073d3a0acf9933c3994b660ebd7b5833f65"
 dependencies = [
+ "frame-benchmarking",
  "frame-election-provider-support",
  "frame-support",
  "frame-system",
@@ -4998,6 +5948,7 @@ dependencies = [
  "pallet-authorship",
  "pallet-session",
  "parity-scale-codec",
+ "rand_chacha 0.2.2",
  "scale-info",
  "serde",
  "sp-application-crypto",
@@ -5016,6 +5967,15 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn",
+]
+
+[[package]]
+name = "pallet-staking-reward-fn"
+version = "4.0.0-dev"
+source = "git+https://github.com/paritytech/substrate?branch=polkadot-v0.9.18#fc3fd073d3a0acf9933c3994b660ebd7b5833f65"
+dependencies = [
+ "log",
+ "sp-arithmetic",
 ]
 
 [[package]]
@@ -5055,6 +6015,7 @@ name = "pallet-tips"
 version = "4.0.0-dev"
 source = "git+https://github.com/paritytech/substrate?branch=polkadot-v0.9.18#fc3fd073d3a0acf9933c3994b660ebd7b5833f65"
 dependencies = [
+ "frame-benchmarking",
  "frame-support",
  "frame-system",
  "log",
@@ -5118,6 +6079,7 @@ name = "pallet-treasury"
 version = "4.0.0-dev"
 source = "git+https://github.com/paritytech/substrate?branch=polkadot-v0.9.18#fc3fd073d3a0acf9933c3994b660ebd7b5833f65"
 dependencies = [
+ "frame-benchmarking",
  "frame-support",
  "frame-system",
  "impl-trait-for-tuples",
@@ -5134,6 +6096,7 @@ name = "pallet-utility"
 version = "4.0.0-dev"
 source = "git+https://github.com/paritytech/substrate?branch=polkadot-v0.9.18#fc3fd073d3a0acf9933c3994b660ebd7b5833f65"
 dependencies = [
+ "frame-benchmarking",
  "frame-support",
  "frame-system",
  "parity-scale-codec",
@@ -5149,6 +6112,7 @@ name = "pallet-vesting"
 version = "4.0.0-dev"
 source = "git+https://github.com/paritytech/substrate?branch=polkadot-v0.9.18#fc3fd073d3a0acf9933c3994b660ebd7b5833f65"
 dependencies = [
+ "frame-benchmarking",
  "frame-support",
  "frame-system",
  "log",
@@ -5161,7 +6125,7 @@ dependencies = [
 [[package]]
 name = "pallet-xcm"
 version = "0.2.3"
-source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#9a0953521ba66f20cdccfaf0817f2e58b4505ae1"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
 dependencies = [
  "frame-support",
  "frame-system",
@@ -5179,7 +6143,7 @@ dependencies = [
 [[package]]
 name = "parachain-info"
 version = "0.1.0"
-source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#9a0953521ba66f20cdccfaf0817f2e58b4505ae1"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
 dependencies = [
  "cumulus-primitives-core",
  "frame-support",
@@ -5215,7 +6179,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e8b44461635bbb1a0300f100a841e571e7d919c81c73075ef5d152ffdb521066"
 dependencies = [
  "arrayvec 0.7.2",
- "bitvec",
+ "bitvec 1.0.0",
  "byte-slice-cast",
  "impl-trait-for-tuples",
  "parity-scale-codec-derive",
@@ -5369,6 +6333,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "password-hash"
+version = "0.2.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "77e0b28ace46c5a396546bcf443bf422b57049617433d8854227352a4a9b24e7"
+dependencies = [
+ "base64ct",
+ "rand_core 0.6.3",
+ "subtle",
+]
+
+[[package]]
 name = "paste"
 version = "1.0.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5389,7 +6364,11 @@ version = "0.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d95f5254224e617595d2cc3cc73ff0a5eaf2637519e25f03388154e9378b6ffa"
 dependencies = [
+ "base64ct",
  "crypto-mac 0.11.1",
+ "hmac 0.11.0",
+ "password-hash",
+ "sha2 0.9.9",
 ]
 
 [[package]]
@@ -5417,6 +6396,40 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "10f4872ae94d7b90ae48754df22fd42ad52ce740b8f370b03da4835417403e53"
 dependencies = [
  "ucd-trie",
+]
+
+[[package]]
+name = "pest_derive"
+version = "2.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "833d1ae558dc601e9a60366421196a8d94bc0ac980476d0b67e1d0988d72b2d0"
+dependencies = [
+ "pest",
+ "pest_generator",
+]
+
+[[package]]
+name = "pest_generator"
+version = "2.1.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "99b8db626e31e5b81787b9783425769681b347011cc59471e33ea46d2ea0cf55"
+dependencies = [
+ "pest",
+ "pest_meta",
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
+name = "pest_meta"
+version = "2.1.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "54be6e404f5317079812fc8f9f5279de376d8856929e21c184ecf6bbd692a11d"
+dependencies = [
+ "maplit",
+ "pest",
+ "sha-1 0.8.2",
 ]
 
 [[package]]
@@ -5503,6 +6516,18 @@ name = "pkg-config"
 version = "0.3.25"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1df8c4ec4b0627e53bdf214615ad287367e482558cf84b109250b37464dc03ae"
+
+[[package]]
+name = "platforms"
+version = "1.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "989d43012e2ca1c4a02507c67282691a0a3207f9dc67cec596b43fe925b3d325"
+
+[[package]]
+name = "platforms"
+version = "2.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e8d0eef3571242013a0d5dc84861c3ae4a652e56e12adf8bdc26ff5f8cb34c94"
 
 [[package]]
 name = "polling"
@@ -5712,6 +6737,12 @@ checksum = "a1feb54ed693b93a84e14094943b84b7c4eae204c512b7ccb95ab0c66d278ad1"
 dependencies = [
  "proc-macro2",
 ]
+
+[[package]]
+name = "radium"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "def50a86306165861203e7f84ecffbbdfdea79f0e51039b33de1e952358c47ac"
 
 [[package]]
 name = "radium"
@@ -5943,6 +6974,23 @@ dependencies = [
 ]
 
 [[package]]
+name = "remote-externalities"
+version = "0.10.0-dev"
+source = "git+https://github.com/paritytech/substrate?branch=polkadot-v0.9.18#fc3fd073d3a0acf9933c3994b660ebd7b5833f65"
+dependencies = [
+ "env_logger",
+ "jsonrpsee 0.8.0",
+ "log",
+ "parity-scale-codec",
+ "serde",
+ "serde_json",
+ "sp-core",
+ "sp-io",
+ "sp-runtime",
+ "sp-version",
+]
+
+[[package]]
 name = "remove_dir_all"
 version = "0.5.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5968,10 +7016,20 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4389f1d5789befaf6029ebd9f7dac4af7f7e3d61b69d4f30e2ac02b57e7712b0"
 
 [[package]]
+name = "rfc6979"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "96ef608575f6392792f9ecf7890c00086591d29a83910939d430753f7c050525"
+dependencies = [
+ "crypto-bigint",
+ "hmac 0.11.0",
+ "zeroize",
+]
+
+[[package]]
 name = "rieltest-runtime"
 version = "0.1.0"
 dependencies = [
- "bitriel-common",
  "bitriel-primitives",
  "cumulus-pallet-aura-ext",
  "cumulus-pallet-dmp-queue",
@@ -6003,6 +7061,7 @@ dependencies = [
  "pallet-xcm",
  "parachain-info",
  "parity-scale-codec",
+ "runtime-common",
  "scale-info",
  "selendra-parachain",
  "selendra-runtime-common",
@@ -6042,6 +7101,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "ripemd160"
+version = "0.9.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2eca4ecc81b7f313189bf73ce724400a07da2a6dac19588b03c8bd76a2dcc251"
+dependencies = [
+ "block-buffer 0.9.0",
+ "digest 0.9.0",
+ "opaque-debug 0.3.0",
+]
+
+[[package]]
 name = "rocksdb"
 version = "0.18.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -6059,6 +7129,15 @@ checksum = "ffc936cf8a7ea60c58f030fd36a612a48f440610214dc54bc36431f9ea0c3efb"
 dependencies = [
  "libc",
  "winapi 0.3.9",
+]
+
+[[package]]
+name = "runtime-common"
+version = "0.1.0"
+dependencies = [
+ "frame-support",
+ "frame-system",
+ "sp-runtime",
 ]
 
 [[package]]
@@ -6117,11 +7196,23 @@ version = "0.19.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "35edb675feee39aec9c99fa5ff985081995a06d594114ae14cbe797ad7b7a6d7"
 dependencies = [
- "base64",
+ "base64 0.13.0",
  "log",
  "ring",
- "sct",
- "webpki",
+ "sct 0.6.1",
+ "webpki 0.21.4",
+]
+
+[[package]]
+name = "rustls"
+version = "0.20.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5aab8ee6c7097ed6057f43c187a62418d0c05a4bd5f18b3571db50ee0f9ce033"
+dependencies = [
+ "log",
+ "ring",
+ "sct 0.7.0",
+ "webpki 0.22.0",
 ]
 
 [[package]]
@@ -6131,9 +7222,30 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5a07b7c1885bd8ed3831c289b7870b13ef46fe0e856d288c30d9cc17d75a2092"
 dependencies = [
  "openssl-probe",
- "rustls",
+ "rustls 0.19.1",
  "schannel",
  "security-framework",
+]
+
+[[package]]
+name = "rustls-native-certs"
+version = "0.6.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0167bac7a9f490495f3c33013e7722b53cb087ecbe082fb0c6387c96f634ea50"
+dependencies = [
+ "openssl-probe",
+ "rustls-pemfile",
+ "schannel",
+ "security-framework",
+]
+
+[[package]]
+name = "rustls-pemfile"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e7522c9de787ff061458fe9a829dc790a3f5b22dc571694fc5883f448b94d9a9"
+dependencies = [
+ "base64 0.13.0",
 ]
 
 [[package]]
@@ -6398,6 +7510,35 @@ dependencies = [
 ]
 
 [[package]]
+name = "sc-consensus-aura"
+version = "0.10.0-dev"
+source = "git+https://github.com/paritytech/substrate?branch=polkadot-v0.9.18#fc3fd073d3a0acf9933c3994b660ebd7b5833f65"
+dependencies = [
+ "async-trait",
+ "futures 0.3.21",
+ "log",
+ "parity-scale-codec",
+ "sc-block-builder",
+ "sc-client-api",
+ "sc-consensus",
+ "sc-consensus-slots",
+ "sc-telemetry",
+ "sp-api",
+ "sp-application-crypto",
+ "sp-block-builder",
+ "sp-blockchain",
+ "sp-consensus",
+ "sp-consensus-aura",
+ "sp-consensus-slots",
+ "sp-core",
+ "sp-inherents",
+ "sp-keystore",
+ "sp-runtime",
+ "substrate-prometheus-endpoint",
+ "thiserror",
+]
+
+[[package]]
 name = "sc-consensus-babe"
 version = "0.10.0-dev"
 source = "git+https://github.com/paritytech/substrate?branch=polkadot-v0.9.18#fc3fd073d3a0acf9933c3994b660ebd7b5833f65"
@@ -6478,6 +7619,42 @@ dependencies = [
 ]
 
 [[package]]
+name = "sc-consensus-manual-seal"
+version = "0.10.0-dev"
+source = "git+https://github.com/paritytech/substrate?branch=polkadot-v0.9.18#fc3fd073d3a0acf9933c3994b660ebd7b5833f65"
+dependencies = [
+ "assert_matches",
+ "async-trait",
+ "futures 0.3.21",
+ "jsonrpc-core",
+ "jsonrpc-core-client",
+ "jsonrpc-derive",
+ "log",
+ "parity-scale-codec",
+ "sc-client-api",
+ "sc-consensus",
+ "sc-consensus-aura",
+ "sc-consensus-babe",
+ "sc-consensus-epochs",
+ "sc-transaction-pool",
+ "sc-transaction-pool-api",
+ "serde",
+ "sp-api",
+ "sp-blockchain",
+ "sp-consensus",
+ "sp-consensus-aura",
+ "sp-consensus-babe",
+ "sp-consensus-slots",
+ "sp-core",
+ "sp-inherents",
+ "sp-keystore",
+ "sp-runtime",
+ "sp-timestamp",
+ "substrate-prometheus-endpoint",
+ "thiserror",
+]
+
+[[package]]
 name = "sc-consensus-slots"
 version = "0.10.0-dev"
 source = "git+https://github.com/paritytech/substrate?branch=polkadot-v0.9.18#fc3fd073d3a0acf9933c3994b660ebd7b5833f65"
@@ -6524,6 +7701,7 @@ dependencies = [
  "parking_lot 0.12.0",
  "sc-executor-common",
  "sc-executor-wasmi",
+ "sc-executor-wasmtime",
  "sp-api",
  "sp-core",
  "sp-core-hashing-proc-macro",
@@ -6763,7 +7941,7 @@ dependencies = [
  "futures-timer",
  "hex",
  "hyper",
- "hyper-rustls",
+ "hyper-rustls 0.22.1",
  "num_cpus",
  "once_cell",
  "parity-scale-codec",
@@ -7093,7 +8271,7 @@ version = "2.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c46be926081c9f4dd5dd9b6f1d3e3229f2360bc6502dd8836f84a93b7c75e99a"
 dependencies = [
- "bitvec",
+ "bitvec 1.0.0",
  "cfg-if 1.0.0",
  "derive_more",
  "parity-scale-codec",
@@ -7158,6 +8336,16 @@ name = "sct"
 version = "0.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b362b83898e0e69f38515b82ee15aa80636befe47c3b6d3d89a911e78fc228ce"
+dependencies = [
+ "ring",
+ "untrusted",
+]
+
+[[package]]
+name = "sct"
+version = "0.7.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d53dcdb7c9f8158937a7981b48accfd39a43af418591a5d008c7b22b5e1b7ca4"
 dependencies = [
  "ring",
  "untrusted",
@@ -7229,7 +8417,7 @@ dependencies = [
 [[package]]
 name = "selendra-approval-distribution"
 version = "0.2.3"
-source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#9a0953521ba66f20cdccfaf0817f2e58b4505ae1"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
 dependencies = [
  "futures 0.3.21",
  "selendra-node-network-protocol",
@@ -7243,7 +8431,7 @@ dependencies = [
 [[package]]
 name = "selendra-availability-bitfield-distribution"
 version = "0.2.3"
-source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#9a0953521ba66f20cdccfaf0817f2e58b4505ae1"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
 dependencies = [
  "futures 0.3.21",
  "selendra-node-network-protocol",
@@ -7256,7 +8444,7 @@ dependencies = [
 [[package]]
 name = "selendra-availability-distribution"
 version = "0.2.3"
-source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#9a0953521ba66f20cdccfaf0817f2e58b4505ae1"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
 dependencies = [
  "derive_more",
  "fatality",
@@ -7279,7 +8467,7 @@ dependencies = [
 [[package]]
 name = "selendra-availability-recovery"
 version = "0.2.3"
-source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#9a0953521ba66f20cdccfaf0817f2e58b4505ae1"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
 dependencies = [
  "fatality",
  "futures 0.3.21",
@@ -7298,11 +8486,35 @@ dependencies = [
 ]
 
 [[package]]
+name = "selendra-cli"
+version = "0.2.3"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
+dependencies = [
+ "clap",
+ "frame-benchmarking-cli",
+ "futures 0.3.21",
+ "log",
+ "sc-cli",
+ "sc-service",
+ "sc-tracing",
+ "selendra-node-core-pvf",
+ "selendra-node-metrics",
+ "selendra-performance-test",
+ "selendra-service",
+ "sp-core",
+ "sp-trie",
+ "substrate-build-script-utils",
+ "thiserror",
+ "try-runtime-cli",
+]
+
+[[package]]
 name = "selendra-client"
 version = "0.2.3"
-source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#9a0953521ba66f20cdccfaf0817f2e58b4505ae1"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
 dependencies = [
  "beefy-primitives",
+ "cardamom-runtime",
  "frame-benchmarking",
  "frame-system-rpc-runtime-api",
  "pallet-mmr-primitives",
@@ -7330,7 +8542,7 @@ dependencies = [
 [[package]]
 name = "selendra-collator-protocol"
 version = "0.2.3"
-source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#9a0953521ba66f20cdccfaf0817f2e58b4505ae1"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
 dependencies = [
  "always-assert",
  "fatality",
@@ -7351,7 +8563,7 @@ dependencies = [
 [[package]]
 name = "selendra-core-primitives"
 version = "0.2.3"
-source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#9a0953521ba66f20cdccfaf0817f2e58b4505ae1"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
 dependencies = [
  "parity-scale-codec",
  "parity-util-mem",
@@ -7364,7 +8576,7 @@ dependencies = [
 [[package]]
 name = "selendra-dispute-distribution"
 version = "0.2.3"
-source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#9a0953521ba66f20cdccfaf0817f2e58b4505ae1"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
 dependencies = [
  "derive_more",
  "fatality",
@@ -7387,7 +8599,7 @@ dependencies = [
 [[package]]
 name = "selendra-erasure-coding"
 version = "0.2.3"
-source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#9a0953521ba66f20cdccfaf0817f2e58b4505ae1"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
 dependencies = [
  "parity-scale-codec",
  "reed-solomon-novelpoly",
@@ -7401,7 +8613,7 @@ dependencies = [
 [[package]]
 name = "selendra-gossip-support"
 version = "0.2.3"
-source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#9a0953521ba66f20cdccfaf0817f2e58b4505ae1"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
 dependencies = [
  "futures 0.3.21",
  "futures-timer",
@@ -7421,7 +8633,7 @@ dependencies = [
 [[package]]
 name = "selendra-network-bridge"
 version = "0.2.3"
-source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#9a0953521ba66f20cdccfaf0817f2e58b4505ae1"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
 dependencies = [
  "async-trait",
  "futures 0.3.21",
@@ -7440,7 +8652,7 @@ dependencies = [
 [[package]]
 name = "selendra-node-collation-generation"
 version = "0.2.3"
-source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#9a0953521ba66f20cdccfaf0817f2e58b4505ae1"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
 dependencies = [
  "futures 0.3.21",
  "parity-scale-codec",
@@ -7458,9 +8670,9 @@ dependencies = [
 [[package]]
 name = "selendra-node-core-approval-voting"
 version = "0.2.3"
-source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#9a0953521ba66f20cdccfaf0817f2e58b4505ae1"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
 dependencies = [
- "bitvec",
+ "bitvec 1.0.0",
  "derive_more",
  "futures 0.3.21",
  "futures-timer",
@@ -7486,9 +8698,9 @@ dependencies = [
 [[package]]
 name = "selendra-node-core-av-store"
 version = "0.2.3"
-source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#9a0953521ba66f20cdccfaf0817f2e58b4505ae1"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
 dependencies = [
- "bitvec",
+ "bitvec 1.0.0",
  "futures 0.3.21",
  "futures-timer",
  "kvdb",
@@ -7506,9 +8718,9 @@ dependencies = [
 [[package]]
 name = "selendra-node-core-backing"
 version = "0.2.3"
-source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#9a0953521ba66f20cdccfaf0817f2e58b4505ae1"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
 dependencies = [
- "bitvec",
+ "bitvec 1.0.0",
  "futures 0.3.21",
  "selendra-erasure-coding",
  "selendra-node-primitives",
@@ -7524,7 +8736,7 @@ dependencies = [
 [[package]]
 name = "selendra-node-core-bitfield-signing"
 version = "0.2.3"
-source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#9a0953521ba66f20cdccfaf0817f2e58b4505ae1"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
 dependencies = [
  "futures 0.3.21",
  "selendra-node-subsystem",
@@ -7539,7 +8751,7 @@ dependencies = [
 [[package]]
 name = "selendra-node-core-candidate-validation"
 version = "0.2.3"
-source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#9a0953521ba66f20cdccfaf0817f2e58b4505ae1"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
 dependencies = [
  "async-trait",
  "futures 0.3.21",
@@ -7557,7 +8769,7 @@ dependencies = [
 [[package]]
 name = "selendra-node-core-chain-api"
 version = "0.2.3"
-source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#9a0953521ba66f20cdccfaf0817f2e58b4505ae1"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
 dependencies = [
  "futures 0.3.21",
  "sc-client-api",
@@ -7572,7 +8784,7 @@ dependencies = [
 [[package]]
 name = "selendra-node-core-chain-selection"
 version = "0.2.3"
-source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#9a0953521ba66f20cdccfaf0817f2e58b4505ae1"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
 dependencies = [
  "futures 0.3.21",
  "futures-timer",
@@ -7589,7 +8801,7 @@ dependencies = [
 [[package]]
 name = "selendra-node-core-dispute-coordinator"
 version = "0.2.3"
-source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#9a0953521ba66f20cdccfaf0817f2e58b4505ae1"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
 dependencies = [
  "fatality",
  "futures 0.3.21",
@@ -7608,7 +8820,7 @@ dependencies = [
 [[package]]
 name = "selendra-node-core-parachains-inherent"
 version = "0.2.3"
-source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#9a0953521ba66f20cdccfaf0817f2e58b4505ae1"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
 dependencies = [
  "async-trait",
  "futures 0.3.21",
@@ -7625,9 +8837,9 @@ dependencies = [
 [[package]]
 name = "selendra-node-core-provisioner"
 version = "0.2.3"
-source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#9a0953521ba66f20cdccfaf0817f2e58b4505ae1"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
 dependencies = [
- "bitvec",
+ "bitvec 1.0.0",
  "futures 0.3.21",
  "futures-timer",
  "rand 0.8.5",
@@ -7642,7 +8854,7 @@ dependencies = [
 [[package]]
 name = "selendra-node-core-pvf"
 version = "0.2.3"
-source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#9a0953521ba66f20cdccfaf0817f2e58b4505ae1"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
 dependencies = [
  "always-assert",
  "assert_matches",
@@ -7672,7 +8884,7 @@ dependencies = [
 [[package]]
 name = "selendra-node-core-pvf-checker"
 version = "0.2.3"
-source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#9a0953521ba66f20cdccfaf0817f2e58b4505ae1"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
 dependencies = [
  "futures 0.3.21",
  "selendra-node-primitives",
@@ -7688,7 +8900,7 @@ dependencies = [
 [[package]]
 name = "selendra-node-core-runtime-api"
 version = "0.2.3"
-source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#9a0953521ba66f20cdccfaf0817f2e58b4505ae1"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
 dependencies = [
  "futures 0.3.21",
  "memory-lru",
@@ -7706,7 +8918,7 @@ dependencies = [
 [[package]]
 name = "selendra-node-jaeger"
 version = "0.2.3"
-source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#9a0953521ba66f20cdccfaf0817f2e58b4505ae1"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
 dependencies = [
  "async-std",
  "lazy_static",
@@ -7724,7 +8936,7 @@ dependencies = [
 [[package]]
 name = "selendra-node-metrics"
 version = "0.2.3"
-source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#9a0953521ba66f20cdccfaf0817f2e58b4505ae1"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
 dependencies = [
  "bs58",
  "futures 0.3.21",
@@ -7743,7 +8955,7 @@ dependencies = [
 [[package]]
 name = "selendra-node-network-protocol"
 version = "0.2.3"
-source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#9a0953521ba66f20cdccfaf0817f2e58b4505ae1"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
 dependencies = [
  "async-trait",
  "fatality",
@@ -7761,7 +8973,7 @@ dependencies = [
 [[package]]
 name = "selendra-node-primitives"
 version = "0.2.3"
-source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#9a0953521ba66f20cdccfaf0817f2e58b4505ae1"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
 dependencies = [
  "bounded-vec",
  "futures 0.3.21",
@@ -7783,7 +8995,7 @@ dependencies = [
 [[package]]
 name = "selendra-node-subsystem"
 version = "0.2.3"
-source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#9a0953521ba66f20cdccfaf0817f2e58b4505ae1"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
 dependencies = [
  "selendra-node-jaeger",
  "selendra-node-subsystem-types",
@@ -7793,7 +9005,7 @@ dependencies = [
 [[package]]
 name = "selendra-node-subsystem-types"
 version = "0.2.3"
-source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#9a0953521ba66f20cdccfaf0817f2e58b4505ae1"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
 dependencies = [
  "derive_more",
  "futures 0.3.21",
@@ -7812,7 +9024,7 @@ dependencies = [
 [[package]]
 name = "selendra-node-subsystem-util"
 version = "0.2.3"
-source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#9a0953521ba66f20cdccfaf0817f2e58b4505ae1"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
 dependencies = [
  "async-trait",
  "derive_more",
@@ -7845,7 +9057,7 @@ dependencies = [
 [[package]]
 name = "selendra-overseer"
 version = "0.2.3"
-source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#9a0953521ba66f20cdccfaf0817f2e58b4505ae1"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
 dependencies = [
  "futures 0.3.21",
  "futures-timer",
@@ -7866,7 +9078,7 @@ dependencies = [
 [[package]]
 name = "selendra-overseer-gen"
 version = "0.2.3"
-source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#9a0953521ba66f20cdccfaf0817f2e58b4505ae1"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
 dependencies = [
  "async-trait",
  "futures 0.3.21",
@@ -7883,7 +9095,7 @@ dependencies = [
 [[package]]
 name = "selendra-overseer-gen-proc-macro"
 version = "0.2.3"
-source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#9a0953521ba66f20cdccfaf0817f2e58b4505ae1"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
 dependencies = [
  "expander 0.0.5",
  "proc-macro-crate 1.1.3",
@@ -7895,7 +9107,7 @@ dependencies = [
 [[package]]
 name = "selendra-parachain"
 version = "0.2.3"
-source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#9a0953521ba66f20cdccfaf0817f2e58b4505ae1"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
 dependencies = [
  "derive_more",
  "frame-support",
@@ -7910,11 +9122,26 @@ dependencies = [
 ]
 
 [[package]]
+name = "selendra-performance-test"
+version = "0.2.3"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
+dependencies = [
+ "cardamom-runtime",
+ "env_logger",
+ "log",
+ "quote",
+ "selendra-erasure-coding",
+ "selendra-node-core-pvf",
+ "selendra-node-primitives",
+ "thiserror",
+]
+
+[[package]]
 name = "selendra-primitives"
 version = "0.2.3"
-source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#9a0953521ba66f20cdccfaf0817f2e58b4505ae1"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
 dependencies = [
- "bitvec",
+ "bitvec 1.0.0",
  "frame-system",
  "hex-literal",
  "parity-scale-codec",
@@ -7942,7 +9169,7 @@ dependencies = [
 [[package]]
 name = "selendra-rpc"
 version = "0.2.3"
-source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#9a0953521ba66f20cdccfaf0817f2e58b4505ae1"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
 dependencies = [
  "beefy-gadget",
  "beefy-gadget-rpc",
@@ -7973,16 +9200,19 @@ dependencies = [
 [[package]]
 name = "selendra-runtime"
 version = "0.2.3"
-source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#9a0953521ba66f20cdccfaf0817f2e58b4505ae1"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
 dependencies = [
  "beefy-primitives",
- "bitvec",
+ "bitvec 1.0.0",
+ "frame-benchmarking",
  "frame-election-provider-support",
  "frame-executive",
  "frame-support",
  "frame-system",
+ "frame-system-benchmarking",
  "frame-system-rpc-runtime-api",
  "frame-try-runtime",
+ "hex-literal",
  "log",
  "pallet-authority-discovery",
  "pallet-authorship",
@@ -8003,11 +9233,13 @@ dependencies = [
  "pallet-multisig",
  "pallet-nicks",
  "pallet-offences",
+ "pallet-offences-benchmarking",
  "pallet-preimage",
  "pallet-proxy",
  "pallet-recovery",
  "pallet-scheduler",
  "pallet-session",
+ "pallet-session-benchmarking",
  "pallet-staking",
  "pallet-staking-reward-curve",
  "pallet-timestamp",
@@ -8053,10 +9285,11 @@ dependencies = [
 [[package]]
 name = "selendra-runtime-common"
 version = "0.2.3"
-source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#9a0953521ba66f20cdccfaf0817f2e58b4505ae1"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
 dependencies = [
  "beefy-primitives",
- "bitvec",
+ "bitvec 1.0.0",
+ "frame-benchmarking",
  "frame-election-provider-support",
  "frame-support",
  "frame-system",
@@ -8064,6 +9297,7 @@ dependencies = [
  "libsecp256k1",
  "log",
  "pallet-authorship",
+ "pallet-babe",
  "pallet-bags-list",
  "pallet-balances",
  "pallet-beefy-mmr",
@@ -8098,7 +9332,7 @@ dependencies = [
 [[package]]
 name = "selendra-runtime-constants"
 version = "0.2.3"
-source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#9a0953521ba66f20cdccfaf0817f2e58b4505ae1"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
 dependencies = [
  "frame-support",
  "selendra-primitives",
@@ -8110,7 +9344,7 @@ dependencies = [
 [[package]]
 name = "selendra-runtime-metrics"
 version = "0.2.3"
-source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#9a0953521ba66f20cdccfaf0817f2e58b4505ae1"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
 dependencies = [
  "bs58",
  "parity-scale-codec",
@@ -8122,11 +9356,12 @@ dependencies = [
 [[package]]
 name = "selendra-runtime-parachains"
 version = "0.2.3"
-source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#9a0953521ba66f20cdccfaf0817f2e58b4505ae1"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
 dependencies = [
  "bitflags",
- "bitvec",
+ "bitvec 1.0.0",
  "derive_more",
+ "frame-benchmarking",
  "frame-support",
  "frame-system",
  "log",
@@ -8155,6 +9390,7 @@ dependencies = [
  "sp-session",
  "sp-staking",
  "sp-std",
+ "static_assertions",
  "xcm",
  "xcm-executor",
 ]
@@ -8162,11 +9398,13 @@ dependencies = [
 [[package]]
 name = "selendra-service"
 version = "0.2.3"
-source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#9a0953521ba66f20cdccfaf0817f2e58b4505ae1"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
 dependencies = [
  "async-trait",
  "beefy-gadget",
  "beefy-primitives",
+ "cardamom-runtime",
+ "cardamom-runtime-constants",
  "frame-system-rpc-runtime-api",
  "futures 0.3.21",
  "hex-literal",
@@ -8261,7 +9499,7 @@ dependencies = [
 [[package]]
 name = "selendra-statement-distribution"
 version = "0.2.3"
-source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#9a0953521ba66f20cdccfaf0817f2e58b4505ae1"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
 dependencies = [
  "arrayvec 0.5.2",
  "fatality",
@@ -8282,7 +9520,7 @@ dependencies = [
 [[package]]
 name = "selendra-statement-table"
 version = "0.2.3"
-source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#9a0953521ba66f20cdccfaf0817f2e58b4505ae1"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
 dependencies = [
  "parity-scale-codec",
  "selendra-primitives",
@@ -8359,6 +9597,15 @@ checksum = "9b7ce2b32a1aed03c558dc61a5cd328f15aff2dbc17daad8fb8af04d2100e15c"
 dependencies = [
  "itoa 1.0.2",
  "ryu",
+ "serde",
+]
+
+[[package]]
+name = "serde_nanos"
+version = "0.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e44969a61f5d316be20a42ff97816efb3b407a924d06824c3d8a49fa8450de0e"
+dependencies = [
  "serde",
 ]
 
@@ -8485,6 +9732,7 @@ version = "1.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "02658e48d89f2bec991f9a78e69cfa4c316f8d6a6c4ec12fae1aeb263d486788"
 dependencies = [
+ "digest 0.9.0",
  "rand_core 0.6.3",
 ]
 
@@ -8509,7 +9757,7 @@ checksum = "eb703cfe953bccee95685111adeedb76fabe4e97549a58d16f03ea7b9367bb32"
 [[package]]
 name = "slot-range-helper"
 version = "0.2.3"
-source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#9a0953521ba66f20cdccfaf0817f2e58b4505ae1"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
 dependencies = [
  "enumn",
  "parity-scale-codec",
@@ -8584,7 +9832,7 @@ version = "0.7.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "41d1c5305e39e09653383c2c7244f2f78b3bcae37cf50c64cb4789c9f5096ec2"
 dependencies = [
- "base64",
+ "base64 0.13.0",
  "bytes 1.1.0",
  "flate2",
  "futures 0.3.21",
@@ -8797,7 +10045,7 @@ name = "sp-core"
 version = "6.0.0"
 source = "git+https://github.com/paritytech/substrate?branch=polkadot-v0.9.18#fc3fd073d3a0acf9933c3994b660ebd7b5833f65"
 dependencies = [
- "base58",
+ "base58 0.2.0",
  "bitflags",
  "blake2-rfc",
  "byteorder",
@@ -9437,6 +10685,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "substrate-build-script-utils"
+version = "3.0.0"
+source = "git+https://github.com/paritytech/substrate?branch=polkadot-v0.9.18#fc3fd073d3a0acf9933c3994b660ebd7b5833f65"
+dependencies = [
+ "platforms 2.0.0",
+]
+
+[[package]]
 name = "substrate-frame-rpc-system"
 version = "4.0.0-dev"
 source = "git+https://github.com/paritytech/substrate?branch=polkadot-v0.9.18#fc3fd073d3a0acf9933c3994b660ebd7b5833f65"
@@ -9650,6 +10906,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "tiny-keccak"
+version = "2.0.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2c9d3793400a45f954c52e73d068316d76b6f4e36977e3fcebb13a2721e80237"
+dependencies = [
+ "crunchy",
+]
+
+[[package]]
 name = "tinyvec"
 version = "1.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -9680,7 +10945,19 @@ dependencies = [
  "pin-project-lite 0.2.9",
  "signal-hook-registry",
  "socket2 0.4.4",
+ "tokio-macros",
  "winapi 0.3.9",
+]
+
+[[package]]
+name = "tokio-macros"
+version = "1.8.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9724f9a975fb987ef7a3cd9be0350edcbe130698af5b8f7a631e23d42d052484"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
 ]
 
 [[package]]
@@ -9689,9 +10966,20 @@ version = "0.22.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bc6844de72e57df1980054b38be3a9f4702aba4858be64dd700181a8a6d0e1b6"
 dependencies = [
- "rustls",
+ "rustls 0.19.1",
  "tokio",
- "webpki",
+ "webpki 0.21.4",
+]
+
+[[package]]
+name = "tokio-rustls"
+version = "0.23.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c43ee83903113e03984cb9e5cebe6c04a5116269e900e3ddba8f068a62adda59"
+dependencies = [
+ "rustls 0.20.6",
+ "tokio",
+ "webpki 0.22.0",
 ]
 
 [[package]]
@@ -9713,6 +11001,7 @@ checksum = "36943ee01a6d67977dd3f84a5a1d2efeb4ada3a1ae771cadfaa535d9d9fc6507"
 dependencies = [
  "bytes 1.1.0",
  "futures-core",
+ "futures-io",
  "futures-sink",
  "log",
  "pin-project-lite 0.2.9",
@@ -9905,6 +11194,31 @@ name = "try-lock"
 version = "0.2.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "59547bce71d9c38b83d9c0e92b6066c4253371f15005def0c30d9657f50c7642"
+
+[[package]]
+name = "try-runtime-cli"
+version = "0.10.0-dev"
+source = "git+https://github.com/paritytech/substrate?branch=polkadot-v0.9.18#fc3fd073d3a0acf9933c3994b660ebd7b5833f65"
+dependencies = [
+ "clap",
+ "jsonrpsee 0.4.1",
+ "log",
+ "parity-scale-codec",
+ "remote-externalities",
+ "sc-chain-spec",
+ "sc-cli",
+ "sc-executor",
+ "sc-service",
+ "serde",
+ "sp-core",
+ "sp-externalities",
+ "sp-io",
+ "sp-keystore",
+ "sp-runtime",
+ "sp-state-machine",
+ "sp-version",
+ "zstd",
+]
 
 [[package]]
 name = "tt-call"
@@ -10308,7 +11622,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "da4439d99100298344567c0eb6916ad5864e99e54760b8177c427e529077fb30"
 dependencies = [
  "anyhow",
- "base64",
+ "base64 0.13.0",
  "bincode",
  "directories-next",
  "file-per-thread-logger",
@@ -10443,12 +11757,31 @@ dependencies = [
 ]
 
 [[package]]
+name = "webpki"
+version = "0.22.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f095d78192e208183081cc07bc5515ef55216397af48b873e5edcd72637fa1bd"
+dependencies = [
+ "ring",
+ "untrusted",
+]
+
+[[package]]
 name = "webpki-roots"
 version = "0.21.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "aabe153544e473b775453675851ecc86863d2a81d786d741f6b76778f2a48940"
 dependencies = [
- "webpki",
+ "webpki 0.21.4",
+]
+
+[[package]]
+name = "webpki-roots"
+version = "0.22.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "44d8de8415c823c8abd270ad483c6feeac771fad964890779f9a8cb24fbbc1bf"
+dependencies = [
+ "webpki 0.22.0",
 ]
 
 [[package]]
@@ -10605,7 +11938,7 @@ dependencies = [
 [[package]]
 name = "xcm"
 version = "0.2.3"
-source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#9a0953521ba66f20cdccfaf0817f2e58b4505ae1"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
 dependencies = [
  "derivative",
  "impl-trait-for-tuples",
@@ -10618,7 +11951,7 @@ dependencies = [
 [[package]]
 name = "xcm-builder"
 version = "0.2.3"
-source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#9a0953521ba66f20cdccfaf0817f2e58b4505ae1"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
 dependencies = [
  "frame-support",
  "frame-system",
@@ -10638,7 +11971,7 @@ dependencies = [
 [[package]]
 name = "xcm-executor"
 version = "0.2.3"
-source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#9a0953521ba66f20cdccfaf0817f2e58b4505ae1"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
 dependencies = [
  "frame-support",
  "impl-trait-for-tuples",
@@ -10655,7 +11988,7 @@ dependencies = [
 [[package]]
 name = "xcm-procedural"
 version = "0.1.0"
-source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#9a0953521ba66f20cdccfaf0817f2e58b4505ae1"
+source = "git+https://github.com/selendra/selendrachain?branch=selendra-0.2.3#51c0ec0c96e8f97ca60f00371342284c1553ee88"
 dependencies = [
  "Inflector",
  "proc-macro2",

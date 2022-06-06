@@ -1,5 +1,5 @@
 [package]
-name = "bitriel-common"
+name = "runtime-common"
 version = "0.1.0"
 authors = ["Selendra <info@selendra.org>"]
 edition = "2021"

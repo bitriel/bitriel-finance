@@ -70,7 +70,7 @@ parachain-info = { git = "https://github.com/selendra/selendrachain", default-fe
 
 # Local Dependency
 bitriel-primitives = { path = "../../primitives", default-features = false }
-bitriel-common = { path = "../common", default-features = false }
+runtime-common = { path = "../common", default-features = false }
 
 [features]
 default = [
@@ -122,7 +122,7 @@ std = [
 	"xcm-executor/std",
 	"xcm/std",
 	"bitriel-primitives/std",
-	"bitriel-common/std",
+	"runtime-common/std",
 ]
 
 runtime-benchmarks = [

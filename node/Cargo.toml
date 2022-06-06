@@ -1,0 +1,34 @@
+[package]
+name = "bitriel"
+version = "0.1.0"
+authors = ["Selendra <info@selendra.org>"]
+edition = "2021"
+default-run = "bitriel"
+
+[[bin]]
+name = "bitriel"
+path = "src/main.rs"
+
+[dependencies]
+futures = "0.3.15"
+parity-util-mem = { version = "0.11", default-features = false, features = ["jemalloc-global"] }
+bitriel-cli = { path = "cli" }
+bitriel-service = { path = "service" }
+
+[features]
+default = []
+runtime-benchmarks = [
+	"bitriel-cli/runtime-benchmarks",
+]
+with-rieltest-runtime = [
+	"bitriel-service/with-rieltest-runtime",
+	"bitriel-cli/with-rieltest-runtime",
+]
+with-bitriel-runtime = [
+	"bitriel-service/with-bitriel-runtime",
+	"bitriel-cli/with-bitriel-runtime",
+]
+with-all-runtime = [
+	"bitriel-service/with-all-runtime",
+	"bitriel-cli/with-all-runtime",
+]

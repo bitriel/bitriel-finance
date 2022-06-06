@@ -25,7 +25,7 @@ include!(concat!(env!("OUT_DIR"), "/wasm_binary.rs"));
 pub mod constants;
 pub mod xcm_config;
 
-use bitriel_primitives::{AccountId, AuraId, Balance, BlockNumber, Hash, Index, Signature};
+use bitriel_primitives::{AccountId, AuraId, Balance, BlockNumber, Hash, Nonce, Signature};
 
 use sp_api::impl_runtime_apis;
 use sp_core::{crypto::KeyTypeId, OpaqueMetadata};
@@ -71,7 +71,7 @@ pub type SignedExtra = (
 	pallet_transaction_payment::ChargeTransactionPayment<Runtime>,
 );
 
-use bitriel_common::{RuntimeBlockLength, RuntimeBlockWeights, MAXIMUM_BLOCK_WEIGHT};
+use runtime_common::{RuntimeBlockLength, RuntimeBlockWeights, MAXIMUM_BLOCK_WEIGHT};
 use constants::{currency::*, fee::WeightToFee, time::*};
 
 impl_opaque_keys! {
@@ -109,7 +109,7 @@ impl frame_system::Config for Runtime {
 	type AccountId = AccountId;
 	type Call = Call;
 	type Lookup = AccountIdLookup<AccountId, ()>;
-	type Index = Index;
+	type Index = Nonce;
 	type BlockNumber = BlockNumber;
 	type Hash = Hash;
 	type Hashing = BlakeTwo256;
@@ -423,8 +423,8 @@ impl_runtime_apis! {
 		}
 	}
 
-	impl frame_system_rpc_runtime_api::AccountNonceApi<Block, AccountId, Index> for Runtime {
-		fn account_nonce(account: AccountId) -> Index {
+	impl frame_system_rpc_runtime_api::AccountNonceApi<Block, AccountId, Nonce> for Runtime {
+		fn account_nonce(account: AccountId) -> Nonce {
 			System::account_nonce(account)
 		}
 	}

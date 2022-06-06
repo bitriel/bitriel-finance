@@ -1,0 +1,64 @@
+[package]
+name = "bitriel-cli"
+version = "0.1.0"
+authors = ["Selendra <info@selendra.org>"]
+edition = "2021"
+
+[dependencies]
+log = "0.4.8"
+clap = { version = "3.1.6", features = ["derive"] }
+codec = { package = "parity-scale-codec", version = "3.0.0" }
+
+sp-core = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.18", optional = true }
+sc-cli = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.18", optional = true }
+sc-service = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.18", optional = true }
+sc-tracing = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.18" }
+sp-runtime = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.18" }
+sc-telemetry = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.18" }
+frame-benchmarking-cli = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.18", optional = true }
+try-runtime-cli = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.18", optional = true }
+
+cumulus-client-service = { git = "https://github.com/selendra/selendrachain", branch = "selendra-0.2.3" }
+cumulus-client-cli = { git = "https://github.com/selendra/selendrachain", branch = "selendra-0.2.3" }
+cumulus-primitives-core = { git = "https://github.com/selendra/selendrachain", branch = "selendra-0.2.3" }
+selendra-parachain = { git = "https://github.com/selendra/selendrachain", branch = "selendra-0.2.3" }
+selendra-cli = { git = "https://github.com/selendra/selendrachain", branch = "selendra-0.2.3" }
+selendra-primitives = { git = "https://github.com/selendra/selendrachain", branch = "selendra-0.2.3" }
+selendra-service = { git = "https://github.com/selendra/selendrachain", branch = "selendra-0.2.3" }
+
+inspect = { package = "bitriel-inspect", path = "../inspect" }
+service = { package = "bitriel-service", path = "../service", default-features = false, optional = true }
+
+[build-dependencies]
+orml-build-script-utils = { path = "../../orml/build-script-utils"}
+
+[features]
+default = [ "wasmtime", "cli", "with-all-runtime" ]
+wasmtime = [ "sc-cli/wasmtime" ]
+cli = [
+	"service",
+	"sp-core",
+	"sc-cli",
+	"sc-service",
+	"frame-benchmarking-cli",
+	"try-runtime-cli",
+]
+runtime-benchmarks = [ "service/runtime-benchmarks" ]
+try-runtime = [
+	"try-runtime-cli",
+	"service/try-runtime",
+]
+with-rieltest-runtime = [
+	"service/with-rieltest-runtime",
+]
+with-bitriel-runtime = [
+	"service/with-bitriel-runtime",
+]
+with-all-runtime = [
+	"with-rieltest-runtime",
+	"with-bitriel-runtime",
+	"service/with-all-runtime",
+]
+cardamom-native = [
+	"selendra-cli/cardamom-native"
+]

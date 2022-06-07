@@ -92,9 +92,9 @@ impl SubstrateCli for Cli {
 			#[cfg(feature = "with-bitriel-runtime")]
 			"bitriel" => Box::new(chain_spec::bitriel::bitriel_config()?),
 			#[cfg(feature = "with-bitriel-runtime")]
-			"bitriel-selendra" => Box::new(chain_spec::bitriel::bitriel_staging_config()?),
+			"bitriel-staging" => Box::new(chain_spec::bitriel::bitriel_staging_config()?),
 			#[cfg(feature = "with-bitriel-runtime")]
-			"bitriel-staging" => Box::new(chain_spec::bitriel::bitriel_dev_config()?),
+			"bitriel-dev" => Box::new(chain_spec::bitriel::bitriel_dev_config()?),
 			path => {
 				let path = std::path::PathBuf::from(path);
 

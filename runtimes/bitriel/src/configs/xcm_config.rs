@@ -14,9 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Selendra.  If not, see <http://www.gnu.org/licenses/>.
 
-use super::{
-	AccountId, Balances, Call, Event, Origin, ParachainInfo, ParachainSystem, Runtime, SelendraXcm,
-	WeightToFee, XcmpQueue,
+use crate::{
+	AccountId, Balances, Call, EnsureRoot, Event, Origin, ParachainInfo, ParachainSystem, Runtime,
+	SelendraXcm, WeightToFee, XcmpQueue,
 };
 use frame_support::{
 	match_type, parameter_types,
@@ -166,4 +166,21 @@ impl pallet_xcm::Config for Runtime {
 impl cumulus_pallet_xcm::Config for Runtime {
 	type Event = Event;
 	type XcmExecutor = XcmExecutor<XcmConfig>;
+}
+
+impl cumulus_pallet_xcmp_queue::Config for Runtime {
+	type Event = Event;
+	type XcmExecutor = XcmExecutor<XcmConfig>;
+	type ChannelInfo = ParachainSystem;
+	type VersionWrapper = ();
+	type ExecuteOverweightOrigin = EnsureRoot<AccountId>;
+	type ControllerOrigin = EnsureRoot<AccountId>;
+	type ControllerOriginConverter = XcmOriginToTransactDispatchOrigin;
+	type WeightInfo = ();
+}
+
+impl cumulus_pallet_dmp_queue::Config for Runtime {
+	type Event = Event;
+	type XcmExecutor = XcmExecutor<XcmConfig>;
+	type ExecuteOverweightOrigin = EnsureRoot<AccountId>;
 }

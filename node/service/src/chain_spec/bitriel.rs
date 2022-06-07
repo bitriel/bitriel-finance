@@ -26,8 +26,8 @@ use crate::chain_spec::{
 
 use bitriel_primitives::{AccountId, Balance, BlockNumber};
 use bitriel_runtime::{
-	constants::currency::UNIT, SessionDuration, BalancesConfig, CollatorSelectionConfig,
-	ParachainInfoConfig, SelendraXcmConfig, SessionConfig, SessionKeys, SessionManagerConfig,
+	constants::currency::UNIT, BalancesConfig, CollatorSelectionConfig, ParachainInfoConfig,
+	SelendraXcmConfig, SessionConfig, SessionDuration, SessionKeys, SessionManagerConfig,
 	SystemConfig,
 };
 

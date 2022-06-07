@@ -26,8 +26,9 @@ use crate::chain_spec::{
 
 use bitriel_primitives::{AccountId, Balance, BlockNumber};
 use bitriel_runtime::{
-	constants::currency::UNIT, BalancesConfig, CollatorSelectionConfig, ParachainInfoConfig,
-	SelendraXcmConfig, SessionConfig, SessionKeys, SystemConfig,
+	constants::currency::UNIT, SessionDuration, BalancesConfig, CollatorSelectionConfig,
+	ParachainInfoConfig, SelendraXcmConfig, SessionConfig, SessionKeys, SessionManagerConfig,
+	SystemConfig,
 };
 
 pub type ChainSpec = sc_service::GenericChainSpec<bitriel_runtime::GenesisConfig, Extensions>;
@@ -157,6 +158,7 @@ fn bitriel_genesis(
 				})
 				.collect(),
 		},
+		session_manager: SessionManagerConfig { session_duration: SessionDuration::get() },
 		collator_selection: CollatorSelectionConfig {
 			invulnerables: initial_authorities.iter().cloned().map(|(acc, _)| acc).collect(),
 			candidacy_bond: Zero::zero(),

@@ -681,6 +681,7 @@ dependencies = [
  "frame-try-runtime",
  "hex-literal",
  "log",
+ "module-session-manager",
  "pallet-aura",
  "pallet-authorship",
  "pallet-balances",
@@ -5025,6 +5026,23 @@ dependencies = [
 ]
 
 [[package]]
+name = "module-session-manager"
+version = "0.1.0"
+dependencies = [
+ "frame-support",
+ "frame-system",
+ "log",
+ "pallet-session",
+ "parity-scale-codec",
+ "scale-info",
+ "serde",
+ "sp-io",
+ "sp-runtime",
+ "sp-staking",
+ "sp-std",
+]
+
+[[package]]
 name = "more-asserts"
 version = "0.2.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -7061,6 +7079,7 @@ dependencies = [
  "frame-try-runtime",
  "hex-literal",
  "log",
+ "module-session-manager",
  "pallet-aura",
  "pallet-authorship",
  "pallet-balances",

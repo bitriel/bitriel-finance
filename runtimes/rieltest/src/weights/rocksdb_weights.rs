@@ -60,4 +60,3 @@ pub mod constants {
 		}
 	}
 }
-

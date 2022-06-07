@@ -27,7 +27,8 @@ use crate::chain_spec::{
 use bitriel_primitives::{AccountId, Balance, BlockNumber};
 use rieltest_runtime::{
 	constants::currency::UNIT, BalancesConfig, CollatorSelectionConfig, ParachainInfoConfig,
-	SelendraXcmConfig, SessionConfig, SessionKeys, SystemConfig,
+	SelendraXcmConfig, SessionConfig, SessionDuration, SessionKeys, SessionManagerConfig,
+	SystemConfig,
 };
 
 pub type ChainSpec = sc_service::GenericChainSpec<rieltest_runtime::GenesisConfig, Extensions>;
@@ -157,6 +158,7 @@ fn rieltest_genesis(
 				})
 				.collect(),
 		},
+		session_manager: SessionManagerConfig { session_duration: SessionDuration::get() },
 		collator_selection: CollatorSelectionConfig {
 			invulnerables: initial_authorities.iter().cloned().map(|(acc, _)| acc).collect(),
 			candidacy_bond: Zero::zero(),

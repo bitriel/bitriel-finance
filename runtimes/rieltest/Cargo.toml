@@ -72,6 +72,9 @@ parachain-info = { git = "https://github.com/selendra/selendrachain", default-fe
 bitriel-primitives = { path = "../../primitives", default-features = false }
 runtime-common = { path = "../common", default-features = false }
 
+# local modules
+module-session-manager = { path = "../../modules/session-manager", default-features = false }
+
 [features]
 default = [
 	"std",
@@ -123,6 +126,21 @@ std = [
 	"xcm/std",
 	"bitriel-primitives/std",
 	"runtime-common/std",
+	"module-session-manager/std",
+]
+
+# When enabled, the runtime api will not be build.
+#
+# This is required by Cumulus to access certain types of the
+# runtime without clashing with the runtime api exported functions
+# in WASM.
+disable-runtime-api = []
+
+# A feature that should be enabled when the runtime should be build for on-chain
+# deployment. This will disable stuff that shouldn't be part of the on-chain wasm
+# to make it smaller like logging for example.
+on-chain-release-build = [
+	"sp-api/disable-logging",
 ]
 
 runtime-benchmarks = [
@@ -139,9 +157,11 @@ runtime-benchmarks = [
 	"xcm-builder/runtime-benchmarks",
 	"cumulus-pallet-session-benchmarking/runtime-benchmarks",
 	"cumulus-pallet-xcmp-queue/runtime-benchmarks",
+	"sp-api/disable-logging",
 ]
 
 try-runtime = [
 	"frame-executive/try-runtime",
 	"frame-try-runtime",
+	"module-session-manager/try-runtime",
 ]
